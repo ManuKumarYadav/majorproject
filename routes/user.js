@@ -8,7 +8,7 @@ const {saveRedirectUrl}=require("../middleware.js");
 const userController = require("../controllers/users.js");
 
 router
-.route("/register")
+.route("/signup")
 .get(userController.renderSignupForm)
 .post(wrapasync(userController.signup));
 
