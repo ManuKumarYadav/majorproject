@@ -1,96 +1,102 @@
-<style>
-    .search-btn {
-        background-color: #fe424d;
-        color: #fff;
-        border-radius: 25px;
-        padding: 0 1rem 0 1rem;
-    }
-    .search-btn:hover {
-        background-color: #fe424d;
-        color: #fff;
-    }
-    .search-btn i {
-        display: inline;
-        margin-right: 0.5rem;
-    }
-    .search-inp {
-        border-radius: 25px;
-        padding: 0.5rem 3rem 0.5rem 3rem;
-        font-size: 1rem;
-    }
-
-    .navbar-collapse {
-        background-color: white !important; /* or any solid color you prefer */
-    }
-
-    .dropdown-menu {
-        background-color: white !important; /* ensures dropdown is also solid */
-        border: 1px solid #ccc;
-    }
-</style>
-
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
-        <button 
-            class="navbar-toggler" 
-            type="button" 
-            data-bs-toggle="collapse" 
-            data-bs-target="#navbarNavAltMarkup"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <!-- Left nav -->
-            <div class="navbar-nav">
-                <a class="nav-link" href="/listings"><b>Explore</b></a>
+<nav class="navbar navbar-expand-lg rentrova-navbar sticky-top">
+    <div class="container-xl d-flex align-items-center justify-content-between">
+        
+        <!-- Brand Logo -->
+        <a class="rentrova-brand" href="/listings">
+            <div class="brand-icon-wrapper">
+                <i class="fa-solid fa-compass"></i>
             </div>
+            <span class="brand-name">Rentrova</span>
+        </a>
 
-            <!-- Search (always visible) -->
-            <div class="navbar-nav ms-auto">
-                <form class="d-flex" role="search">
-                    <input 
-                        class="form-control me-2 search-inp" 
-                        type="search" 
-                        placeholder="Search destinations" 
-                    />
-                    <button class="btn search-btn" type="submit">
-                        <i class="fa-solid fa-magnifying-glass"></i>Search
+        <!-- Search Bar (Desktop / Tablet) -->
+        <div class="d-none d-md-flex align-items-center justify-content-center flex-grow-1 mx-4">
+            <div class="nav-search-bar">
+                <input 
+                    type="text" 
+                    id="navSearchInput"
+                    class="nav-search-input" 
+                    placeholder="Search destinations, villas, beachfronts..."
+                    autocomplete="off"
+                />
+                <button class="nav-search-btn" id="navSearchBtn" type="button" title="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Side Actions & User Menu -->
+        <div class="d-flex align-items-center gap-2">
+            <a href="/listings/new" class="host-home-btn d-none d-sm-inline-flex align-items-center gap-1">
+                <i class="fa-solid fa-plus-circle text-danger me-1"></i> List your place
+            </a>
+
+            <!-- Theme Switcher -->
+            <div class="position-relative" id="themeWrapper">
+                <button class="theme-switcher-btn" id="themeSwitcherBtn" title="Appearance" aria-label="Change theme">
+                    <i class="fa-solid fa-circle-half-stroke" id="themeIcon"></i>
+                </button>
+
+                <div class="theme-panel" id="themePanel" role="menu">
+                    <button class="theme-option" data-theme-choice="light" onclick="setTheme('light')">
+                        <i class="fa-solid fa-sun text-warning"></i> Light
                     </button>
-                </form>
-            </div>
-       <div class="navbar-nav ms-auto d-none d-md-flex">
-              <a class="nav-link" href="/listings/new"><b>Airbnb your home</b></a>
-        <% if(!currentUser) { %>
-        <a class="nav-link" href="/signup"><b>Sign Up</b></a>
-        <a class="nav-link" href="/login"><b>Log In</b></a>
-        <% } %>
-        <% if(currentUser) { %>
-           <a class="nav-link" href="/logout"><b>Log Out</b></a>
-           <% } %>
-      </div>
-
-      <div class="navbar-nav d-md-none mt-2">
-                <div class="dropdown w-100">
-                    <button 
-                        class="btn btn-outline-secondary dropdown-toggle w-100" 
-                        type="button" 
-                        data-bs-toggle="dropdown" 
-                        aria-expanded="false">Menu</button>
-
-                    <ul class="dropdown-menu w-100">
-                        <li><a class="dropdown-item" href="/listings/new">Airbnb your home</a></li>
-                        <% if (!currentUser) { %>
-                            <li><a class="dropdown-item" href="/signup">Sign up</a></li>
-                            <li><a class="dropdown-item" href="/login">Log in</a></li>
-                        <% } %>
-                        <% if (currentUser) { %>
-                            <li><a class="dropdown-item" href="/logout">Log out</a></li>
-                        <% } %>
-                    </ul>
+                    <button class="theme-option" data-theme-choice="dark" onclick="setTheme('dark')">
+                        <i class="fa-solid fa-moon text-primary"></i> Dark
+                    </button>
+                    <button class="theme-option" data-theme-choice="system" onclick="setTheme('system')">
+                        <i class="fa-solid fa-laptop text-muted"></i> System Default
+                    </button>
                 </div>
             </div>
+
+            <!-- User Menu Dropdown -->
+            <div class="dropdown">
+                <div class="user-menu-pill dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-bars text-muted" style="font-size: 0.9rem;"></i>
+                    <div class="user-avatar-circle <%= currentUser ? 'logged-in' : '' %>">
+                        <% if(currentUser && currentUser.username) { %>
+                            <%= currentUser.username.charAt(0).toUpperCase() %>
+                        <% } else { %>
+                            <i class="fa-solid fa-user" style="font-size: 0.75rem;"></i>
+                        <% } %>
+                    </div>
+                </div>
+
+                <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu shadow">
+                    <% if(!currentUser) { %>
+                        <li><a class="dropdown-item custom-dropdown-item fw-bold" href="/signup"><i class="fa-solid fa-user-plus text-primary"></i> Sign up</a></li>
+                        <li><a class="dropdown-item custom-dropdown-item" href="/login"><i class="fa-solid fa-right-to-bracket text-muted"></i> Log in</a></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item custom-dropdown-item" href="/listings/new"><i class="fa-solid fa-house-chimney text-muted"></i> Rentrova your home</a></li>
+                    <% } else { %>
+                        <li class="px-3 py-2 border-bottom mb-1">
+                            <span class="d-block small text-muted">Signed in as</span>
+                            <span class="fw-bold text-dark"><%= currentUser.username %></span>
+                        </li>
+                        <li><a class="dropdown-item custom-dropdown-item" href="/listings/new"><i class="fa-solid fa-plus text-primary"></i> Create New Listing</a></li>
+                        <li><a class="dropdown-item custom-dropdown-item" href="/listings"><i class="fa-solid fa-compass text-muted"></i> Explore Stays</a></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item custom-dropdown-item text-danger" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
     </div>
-  </div>
 </nav>
+
+<!-- Mobile Search Bar (Visible only on mobile screens) -->
+<div class="d-md-none px-3 pt-2 pb-1 bg-white border-bottom">
+    <div class="nav-search-bar w-100">
+        <input 
+            type="text" 
+            id="mobileNavSearchInput"
+            class="nav-search-input" 
+            placeholder="Search by destination, country..."
+        />
+        <button class="nav-search-btn" type="button">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </div>
+</div>

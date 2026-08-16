@@ -1,22 +1,110 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="row mt-3">
-    <h1 class="col-6 offset-3">login</h1>
-    <div class="col-6 offset-3">
-        <form action="/login" method="POST" class="needs-validation" novalidate>
-            <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input name="username" id="username" type="text" class="form-control"
-          required
-        />
+<div class="row justify-content-center py-4">
+    <div class="col-xl-9 col-lg-10">
+        
+        <div class="auth-split-wrapper row g-0">
+            <!-- Left Banner Side -->
+            <div class="col-md-5 auth-banner-side d-flex flex-column justify-content-between p-4 p-lg-5">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div class="brand-icon-wrapper" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); box-shadow: none;">
+                            <i class="fa-solid fa-compass text-white"></i>
+                        </div>
+                        <span class="fs-4 fw-bold text-white">Rentrova</span>
+                    </div>
 
-        <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input name="password" id="password" type="password" class="form-control"
-          required
-        />
+                    <h3 class="fw-extrabold text-white mb-3" style="font-weight: 800; line-height: 1.2;">Welcome back to your journeys.</h3>
+                    <p class="text-white-50" style="font-size: 0.95rem;">Log in to access your saved wishlist, manage bookings, and chat with your hosts.</p>
+                </div>
+
+                <div class="pt-4 border-top border-white border-opacity-25 text-white-50 small">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-white">
+                        <i class="fa-solid fa-shield-halved"></i> <strong>Bank-grade Secure Authentication</strong>
+                    </div>
+                    <span>Trusted by over 100,000+ happy travelers worldwide.</span>
+                </div>
+            </div>
+
+            <!-- Right Form Side -->
+            <div class="col-md-7 p-4 p-lg-5 bg-white">
+                <div class="mb-4">
+                    <h2 class="form-luxury-title mb-1">Sign In</h2>
+                    <p class="text-muted small">Don't have an account yet? <a href="/signup" class="text-danger fw-bold text-decoration-none">Sign up for free</a></p>
+                </div>
+
+                <form action="/login" method="POST" class="needs-validation" novalidate>
+                    
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label-modern">
+                            <i class="fa-solid fa-user text-danger"></i> Username
+                        </label>
+                        <input 
+                            name="username" 
+                            id="username" 
+                            type="text" 
+                            class="form-control form-control-modern"
+                            placeholder="Enter your username"
+                            required
+                            autocomplete="username"
+                        />
+                        <div class="invalid-feedback">Please enter your username.</div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label for="password" class="form-label-modern mb-0">
+                                <i class="fa-solid fa-lock text-danger"></i> Password
+                            </label>
+                        </div>
+                        <div class="position-relative">
+                            <input 
+                                name="password" 
+                                id="password" 
+                                type="password" 
+                                class="form-control form-control-modern pe-5"
+                                placeholder="Enter your password"
+                                required
+                                autocomplete="current-password"
+                            />
+                            <button 
+                                type="button" 
+                                class="btn position-absolute top-50 end-0 translate-middle-y border-0 text-muted" 
+                                onclick="togglePasswordVisibility('password', this)" 
+                                style="background: transparent;"
+                            >
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback">Please enter your password.</div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-luxury-primary mb-3">
+                        <i class="fa-solid fa-right-to-bracket me-1"></i> Sign In to Account
+                    </button>
+
+                </form>
+            </div>
         </div>
-        <button class="btn btn-success">login</button>
-    </form>
+
+    </div>
 </div>
-</div>
+
+<script>
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector("i");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>

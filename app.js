@@ -18,6 +18,7 @@ const User = require("./models/user.js");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const bookingRouter = require("./routes/booking.js");
 
 const dbUrl = process.env.ATLASDB_URL;
 
@@ -34,6 +35,7 @@ async function main(){
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
@@ -96,6 +98,7 @@ app.use((req, res, next) => {
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
+app.use("/listings/:id", bookingRouter);
 app.use("/", userRouter);
 
 // app.all("*", (req, res,next) => {

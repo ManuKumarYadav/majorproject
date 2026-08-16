@@ -1,27 +1,133 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="row mt-3">
-    <h1 class="col-6 offset-3">SignUp on Rentrova </h1>
-    <div class="col-6 offset-3">
-        <form action="/signup" method="POST" class="needs-validation" novalidate>
-            <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input name="username" id="username" type="text" class="form-control"
-          required
-        />
+<div class="row justify-content-center py-4">
+    <div class="col-xl-9 col-lg-10">
+        
+        <div class="auth-split-wrapper row g-0">
+            <!-- Left Banner Side -->
+            <div class="col-md-5 auth-banner-side d-flex flex-column justify-content-between p-4 p-lg-5">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div class="brand-icon-wrapper" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); box-shadow: none;">
+                            <i class="fa-solid fa-compass text-white"></i>
+                        </div>
+                        <span class="fs-4 fw-bold text-white">Rentrova</span>
+                    </div>
+
+                    <h3 class="fw-extrabold text-white mb-3" style="font-weight: 800; line-height: 1.2;">Your next journey starts here.</h3>
+                    <p class="text-white-50" style="font-size: 0.95rem;">Join the global Rentrova community to discover boutique stays, earn as a verified host, and unlock member rates.</p>
+                </div>
+
+                <div class="pt-4 border-top border-white border-opacity-25 text-white-50 small">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-white">
+                        <i class="fa-solid fa-circle-check text-success"></i> <strong>Zero Hidden Fees</strong>
+                    </div>
+                    <span>Sign up in under 60 seconds. No credit card required.</span>
+                </div>
+            </div>
+
+            <!-- Right Form Side -->
+            <div class="col-md-7 p-4 p-lg-5 bg-white">
+                <div class="mb-4">
+                    <h2 class="form-luxury-title mb-1">Create an Account</h2>
+                    <p class="text-muted small">Already have an account? <a href="/login" class="text-danger fw-bold text-decoration-none">Sign in instead</a></p>
+                </div>
+
+                <form action="/signup" method="POST" class="needs-validation" novalidate>
+                    
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label-modern">
+                            <i class="fa-solid fa-user text-danger"></i> Choose Username
+                        </label>
+                        <input 
+                            name="username" 
+                            id="username" 
+                            type="text" 
+                            class="form-control form-control-modern"
+                            placeholder="e.g. wanderlust_traveler"
+                            required
+                            autocomplete="username"
+                        />
+                        <div class="invalid-feedback">Please choose a unique username.</div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label-modern">
+                            <i class="fa-solid fa-envelope text-danger"></i> Email Address
+                        </label>
+                        <input 
+                            name="email" 
+                            id="email" 
+                            type="email" 
+                            class="form-control form-control-modern"
+                            placeholder="name@example.com"
+                            required
+                            autocomplete="email"
+                        />
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <label for="password" class="form-label-modern">
+                            <i class="fa-solid fa-lock text-danger"></i> Create Password
+                        </label>
+                        <div class="position-relative">
+                            <input 
+                                name="password" 
+                                id="password" 
+                                type="password" 
+                                class="form-control form-control-modern pe-5"
+                                placeholder="At least 6 characters"
+                                required
+                                autocomplete="new-password"
+                            />
+                            <button 
+                                type="button" 
+                                class="btn position-absolute top-50 end-0 translate-middle-y border-0 text-muted" 
+                                onclick="togglePasswordVisibility('password', this)" 
+                                style="background: transparent;"
+                            >
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback">Please provide a secure password.</div>
+                    </div>
+
+                    <!-- Terms checkbox -->
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" value="" id="termsCheck" required checked>
+                        <label class="form-check-label text-muted small" for="termsCheck">
+                            I agree to Rentrova's <a href="/terms" class="text-dark fw-bold">Terms of Service</a> and <a href="/privacy" class="text-dark fw-bold">Privacy Policy</a>.
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-luxury-primary mb-3">
+                        <i class="fa-solid fa-user-plus me-1"></i> Complete Sign Up
+                    </button>
+
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input name="email" id="email" type="email" class="form-control" required
-        />
-        </div>
-        <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input name="password" id="password" type="password" class="form-control"
-          required
-        />
-        </div>
-        <button class="btn btn-success">SignUp</button>
-    </form>
+
+    </div>
 </div>
-</div>
+
+<script>
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector("i");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>

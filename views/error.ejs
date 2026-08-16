@@ -1,6 +1,25 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-3">
-<div class="alert alert-danger col-6 offset-3" role="alert">
- <p class="alert-heading"><%=message %></p>
-</div>
+
+<div class="row justify-content-center py-5">
+    <div class="col-lg-6 col-md-8 text-center">
+        <div class="luxury-form-card p-5">
+            <div class="brand-icon-wrapper mx-auto mb-4" style="width: 72px; height: 72px; font-size: 2rem; background: linear-gradient(135deg, #EF4444, #DC2626);">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            
+            <h2 class="fw-extrabold text-dark mb-2">Oops! Something went wrong</h2>
+            <p class="text-secondary mb-4" style="font-size: 1.05rem;">
+                <%= message || "We couldn't find the page you were looking for or an unexpected error occurred." %>
+            </p>
+
+            <div class="d-flex align-items-center justify-content-center gap-3">
+                <a href="/listings" class="btn btn-luxury-primary" style="width: auto; min-width: 160px;">
+                    <i class="fa-solid fa-house me-1"></i> Back to Explore
+                </a>
+                <button onclick="window.history.back()" class="btn btn-luxury-secondary">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Go Back
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

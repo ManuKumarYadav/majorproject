@@ -1,47 +1,156 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-3">
-    <div class="col-8 offset-2">
-        <br/><br/>
-    <h3>Create a New Listing</h3>
-    <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
-        <div class="mb-3">
-        <label for="title"class="form-label">Title</label>
-        <input name="listing[title]" placeholder="Add a catchy title" type="text" class="form-control"
-          required
-        />
+
+<div class="row justify-content-center py-4">
+    <div class="col-lg-8 col-md-10">
+        
+        <div class="luxury-form-card">
+            <div class="form-header-badge">
+                <i class="fa-solid fa-sparkles"></i> Host Mode
+            </div>
+            <h2 class="form-luxury-title">List Your Extraordinary Stay</h2>
+            <p class="form-luxury-subtitle">Share your home, villa, or cabin with travelers from around the world and start earning.</p>
+
+            <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+                
+                <!-- Listing Title -->
+                <div class="mb-4">
+                    <label for="title" class="form-label-modern">
+                        <i class="fa-solid fa-heading text-danger"></i> Listing Title
+                    </label>
+                    <input 
+                        name="listing[title]" 
+                        id="title"
+                        placeholder="e.g. Luxury Seaview Villa in Goa with Private Pool" 
+                        type="text" 
+                        class="form-control form-control-modern"
+                        required
+                    />
+                    <div class="invalid-feedback">Please enter an engaging, catchy title for your stay.</div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <label for="description" class="form-label-modern">
+                        <i class="fa-solid fa-align-left text-danger"></i> Description
+                    </label>
+                    <textarea 
+                        name="listing[description]" 
+                        id="description"
+                        rows="4" 
+                        placeholder="Describe the atmosphere, unique architecture, views, and standout amenities..." 
+                        class="form-control form-control-modern" 
+                        required
+                    ></textarea>
+                    <div class="invalid-feedback">Please provide a descriptive overview of the property.</div>
+                </div>
+
+                <!-- Image Upload with Instant Live Preview -->
+                <div class="mb-4">
+                    <label class="form-label-modern">
+                        <i class="fa-solid fa-image text-danger"></i> Property Showcase Image
+                    </label>
+                    
+                    <div class="upload-dropzone" onclick="document.getElementById('imageFileInput').click()">
+                        <i class="fa-solid fa-cloud-arrow-up upload-dropzone-icon"></i>
+                        <h6 class="fw-bold mb-1">Click to upload high-resolution property image</h6>
+                        <p class="text-muted small mb-0">Supports JPG, PNG, WEBP up to 10MB</p>
+                        <input 
+                            id="imageFileInput" 
+                            name="listing[image]" 
+                            type="file" 
+                            class="d-none" 
+                            accept="image/*" 
+                            required 
+                            onchange="previewUploadedImage(event)"
+                        />
+                    </div>
+                    <div class="invalid-feedback d-block text-danger mt-1" id="fileError" style="display: none !important;">An image is required.</div>
+
+                    <!-- Uploaded Image Preview Container -->
+                    <div id="imagePreviewWrapper" class="upload-preview-container">
+                        <img id="imagePreviewImg" class="upload-preview-img" src="" alt="Preview">
+                    </div>
+                </div>
+
+                <!-- Price and Location Row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-5">
+                        <label for="price" class="form-label-modern">
+                            <i class="fa-solid fa-indian-rupee-sign text-danger"></i> Price per night (INR)
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 fw-bold">&#8377;</span>
+                            <input 
+                                name="listing[price]" 
+                                id="price"
+                                placeholder="4500" 
+                                type="number"
+                                min="100"
+                                class="form-control form-control-modern border-start-0" 
+                                required
+                            />
+                        </div>
+                        <div class="invalid-feedback">Please enter a valid price amount.</div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <label for="location" class="form-label-modern">
+                            <i class="fa-solid fa-location-dot text-danger"></i> City / State
+                        </label>
+                        <input 
+                            name="listing[location]" 
+                            id="location"
+                            placeholder="e.g. North Goa, Mumbai, Manali" 
+                            type="text" 
+                            class="form-control form-control-modern" 
+                            required
+                        />
+                        <div class="invalid-feedback">Please specify the city or locality.</div>
+                    </div>
+                </div>
+
+                <!-- Country -->
+                <div class="mb-4">
+                    <label for="country" class="form-label-modern">
+                        <i class="fa-solid fa-globe text-danger"></i> Country
+                    </label>
+                    <input 
+                        name="listing[country]" 
+                        id="country"
+                        placeholder="e.g. India" 
+                        type="text" 
+                        class="form-control form-control-modern" 
+                        required
+                    />
+                    <div class="invalid-feedback">Please enter the country name.</div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-flex align-items-center justify-content-end gap-3 mt-4 pt-3 border-top">
+                    <a href="/listings" class="btn btn-luxury-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-luxury-primary" style="width: auto; min-width: 180px;">
+                        <i class="fa-solid fa-plus-circle me-1"></i> Publish Listing
+                    </button>
+                </div>
+
+            </form>
         </div>
-        <div class="valid-feedback">Title looks good</div>
-        <div class="mb-3">
-            <label for="description"class="form-label">Description</label>
-                <textarea name="listing[description]" class="form-control" required></textarea>
-                 <div class="invalid-feedback">Please enter a short description</div>
-        </div>
-           <div class="mb-3">
-            <label for="image"class="form-label">Upload Listing Image</label>
-             <input name="listing[image]"type="file"class="form-control" required/>
-        </div>
-        <div class="row">
-        <div class="mb-3 col-md-4">
-             <label for="price"class="form-label">Price</label>
-               <input name="listing[price]" placeholder="1200" class="form-control" 
-               required
-               />
-               <div class="invalid-feedback">Price should be valid</div>
-         </div>
-        <div class="mb-3 col-md-8">
-             <label for="country"class="form-label">Country</label>
-              <input name="listing[country]" placeholder="India" type="text"class="form-control"required/>
-              <div class="invalid-feedback">Country name should be valid</div>
-        </div>
-        </div>
- 
-           <div class="mb-3">
-             <label for="location"class="form-label">Location</label>
-             <input name="listing[location]" placeholder="Mumbai , Patna , Delhi" type="text"class="form-control" required/>
-             <div class="invalid-feedback">Location should be valid</div>
-           </div>
-           
-             <button class="btn btn-dark add-btn mt-3">Add</button>
-    </form>
+
     </div>
-    </div>
+</div>
+
+<script>
+    function previewUploadedImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const wrapper = document.getElementById("imagePreviewWrapper");
+                const img = document.getElementById("imagePreviewImg");
+                img.src = e.target.result;
+                wrapper.style.display = "block";
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
