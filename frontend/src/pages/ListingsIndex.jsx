@@ -18,7 +18,8 @@ export default function ListingsIndex() {
   const fetchListings = async () => {
     setLoading(true);
     try {
-      let url = '/api/listings';
+      const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+               let url = `${API_BASE_URL}/api/listings`;
       const params = new URLSearchParams();
       if (selectedCategory) params.append('category', selectedCategory);
       if (searchQuery) params.append('search', searchQuery);
