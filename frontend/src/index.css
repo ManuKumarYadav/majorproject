@@ -1,0 +1,117 @@
+/* STAYAIRA LUXURY DESIGN SYSTEM */
+:root {
+  --primary: #E11D48;
+  --primary-hover: #BE123C;
+  --primary-gradient: linear-gradient(135deg, #E11D48 0%, #FB7185 100%);
+  --dark: #0F172A;
+  --light-bg: #FAFAFA;
+  --card-bg: #FFFFFF;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --border-color: #E2E8F0;
+  --navbar-bg: rgba(255, 255, 255, 0.95);
+  --footer-bg: #F8FAFC;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --primary: #FB7185;
+  --primary-hover: #F43F5E;
+  --primary-gradient: linear-gradient(135deg, #E11D48 0%, #BE123C 100%);
+  --light-bg: #0B0F19;
+  --card-bg: #151C2C;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --border-color: #1E293B;
+  --navbar-bg: rgba(15, 23, 42, 0.95);
+  --footer-bg: #0B0F19;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-family);
+  background-color: var(--light-bg);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+#root { display: flex; flex-direction: column; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+.stayaira-container { max-width: 1320px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
+.glass-effect { background: var(--navbar-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); }
+.btn-primary-stayaira {
+  background: var(--primary-gradient);
+  color: #FFFFFF !important;
+  border: none;
+  padding: 0.75rem 1.6rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
+}
+.btn-primary-stayaira:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(225, 29, 72, 0.4); }
+.btn-outline-stayaira {
+  background: transparent;
+  color: var(--text-main);
+  border: 1.5px solid var(--border-color);
+  padding: 0.65rem 1.4rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+.btn-outline-stayaira:hover { border-color: var(--primary); color: var(--primary); background: rgba(225, 29, 72, 0.05); }
+.stayaira-input {
+  width: 100%;
+  padding: 0.75rem 1.1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.stayaira-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.15); outline: none; }
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 3rem;
+}
+.listing-card-wrapper { display: flex; flex-direction: column; text-decoration: none; color: inherit; border-radius: 14px; transition: transform 0.25s ease; }
+.listing-card-wrapper:hover { transform: translateY(-4px); }
+.listing-image-box { position: relative; width: 100%; aspect-ratio: 20/19; border-radius: 14px; overflow: hidden; background: #E2E8F0; }
+.listing-image-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.listing-card-wrapper:hover .listing-image-box img { transform: scale(1.05); }
+.badge-guest-favorite {
+  position: absolute; top: 12px; left: 12px;
+  background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(6px);
+  color: #0F172A; padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.wishlist-btn {
+  position: absolute; top: 12px; right: 12px;
+  background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(6px); color: #FFFFFF; border: none;
+  width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s ease;
+}
+.wishlist-btn:hover, .wishlist-btn.active { color: #E11D48; background: rgba(255, 255, 255, 0.9); }

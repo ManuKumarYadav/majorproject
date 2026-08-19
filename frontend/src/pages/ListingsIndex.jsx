@@ -1,0 +1,83 @@
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import FilterBar from '../components/FilterBar';
+import ListingCard from '../components/ListingCard';
+import { SearchX } from 'lucide-react';
+
+export default function ListingsIndex() {
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [displayTax, setDisplayTax] = useState(false);
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const searchQuery = queryParams.get('search') || '';
+
+  const fetchListings = async () => {
+    setLoading(true);
+    try {
+      let url = '/api/listings';
+      const params = new URLSearchParams();
+      if (selectedCategory) params.append('category', selectedCategory);
+      if (searchQuery) params.append('search', searchQuery);
+
+      if (params.toString()) url += '?' + params.toString();
+      const res = await axios.get(url);
+      if (res.data.success) {
+        setListings(res.data.listings);
+      }
+    } catch (err) {
+      console.error('Error loading listings:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchListings();
+  }, [selectedCategory, searchQuery]);
+
+  return (
+    <div>
+      <FilterBar 
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+        displayTax={displayTax}
+        onToggleTax={setDisplayTax}
+      />
+
+      <div className="stayaira-container" style={{ padding: '2rem 1.5rem' }}>
+        {loading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem 1.5rem', marginTop: '1rem' }}>
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
+              <div key={n} style={{ borderRadius: '16px', overflow: 'hidden' }}>
+                <div style={{ width: '100%', aspectRatio: '20/19', background: 'var(--border-color)', opacity: 0.6 }}></div>
+                <div style={{ height: '16px', background: 'var(--border-color)', width: '60%', margin: '10px 0 6px', borderRadius: '4px' }}></div>
+                <div style={{ height: '14px', background: 'var(--border-color)', width: '40%', borderRadius: '4px' }}></div>
+              </div>
+            ))}
+          </div>
+        ) : listings.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '5rem 1rem' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(225,29,72,0.1)', color: '#E11D48', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+              <SearchX size={32} />
+            </div>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '0.5rem' }}>No listings found</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Try clearing filters or searching for another destination.</p>
+            <button onClick={() => setSelectedCategory('')} className="btn-primary-stayaira">
+              View All Accommodations
+            </button>
+          </div>
+        ) : (
+          <div className="listings-grid">
+            {listings.map(listing => (
+              <ListingCard key={listing._id} listing={listing} displayTax={displayTax} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

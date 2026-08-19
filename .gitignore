@@ -118,3 +118,18 @@ dist
 .pnp.*
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node
+
+
+
+
+
+node_modules/
+.env
+uploads/
+.vscode/
+
+
+Add-Content .gitignore "node_modules/"
+Add-Content .gitignore ".env"
+Add-Content .gitignore "uploads/"
+Add-Content .gitignore ".vscode/"
