@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Compass, Search, Moon, Sun, User, LogIn, UserPlus, PlusCircle, LayoutDashboard, LogOut, Menu, X, Home, Plane, Settings } from 'lucide-react';
+import { Compass, Search, Moon, Sun, User, LogIn, UserPlus, PlusCircle, LayoutDashboard, LogOut, Menu, X, Home, Plane, Settings, SlidersHorizontal } from 'lucide-react';
 
 export default function Navbar({ onSearch }) {
   const { user, logout } = useAuth();
@@ -34,8 +34,22 @@ export default function Navbar({ onSearch }) {
 
   return (
     <>
-      <header className="glass-effect" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
-        <div className="stayaira-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '80px' }}>
+      <header className="glass-effect main-header" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
+        {/* Mobile Top Search Bar (Airbnb Style) */}
+        <div className="mobile-top-search-bar" onClick={() => setSearchModalOpen(true)}>
+          <div className="mobile-search-pill-inner">
+            <Search size={18} color="var(--primary)" />
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Start your search</p>
+              <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', margin: 0 }}>Anywhere · Any week · Add guests</p>
+            </div>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--light-bg)' }}>
+              <SlidersHorizontal size={14} color="var(--text-main)" />
+            </div>
+          </div>
+        </div>
+
+        <div className="stayaira-container desktop-header-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '80px' }}>
 
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
             <div style={{

@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import BottomNav from './components/BottomNav';
 import ListingsIndex from './pages/ListingsIndex';
 import ListingDetail from './pages/ListingDetail';
 import NewListing from './pages/NewListing';
@@ -39,6 +40,7 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
+      <BottomNav />
     </>
   );
 }
