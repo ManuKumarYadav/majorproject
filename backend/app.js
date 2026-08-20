@@ -211,7 +211,7 @@ app.use((req, res, next) => {
     if (fs.existsSync(indexPath)) {
         return res.sendFile(indexPath);
     }
-    return res.redirect("http://localhost:5173" + req.url);
+    return res.status(404).json({ success: false, message: "Frontend is not deployed with this backend" });
 });
 
 // Error handling middleware
