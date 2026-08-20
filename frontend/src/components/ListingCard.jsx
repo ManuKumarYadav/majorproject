@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Heart } from 'lucide-react';
+import { isWishlisted, toggleWishlistId } from '../utils/wishlist';
 
 export default function ListingCard({ listing, displayTax }) {
-  const [isLiked, setIsLiked] = useState(false);
+  const [liked, setLiked] = useState(() => isWishlisted(listing._id));
+
+  useEffect(() => {
+    const handleWishlistUpdate = () => {
+      setLiked(isWishlisted(listing._id));
+    };
+    window.addEventListener('wishlistUpdated', handleWishlistUpdate);
+    return () => window.removeEventListener('wishlistUpdated', handleWishlistUpdate);
+  }, [listing._id]);
+
+  const handleHeartClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlistId(listing._id);
+    setLiked(!liked);
+  };
 
   const price = listing.price || 0;
   const taxPrice = Math.round(price * 1.18);
@@ -19,13 +35,11 @@ export default function ListingCard({ listing, displayTax }) {
         </div>
 
         <button 
-          className={'wishlist-btn' + (isLiked ? ' active' : '')}
-          onClick={(e) => {
-            e.preventDefault();
-            setIsLiked(!isLiked);
-          }}
+          className={'wishlist-btn' + (liked ? ' active' : '')}
+          onClick={handleHeartClick}
+          title={liked ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          <Heart size={16} fill={isLiked ? '#E11D48' : 'none'} color={isLiked ? '#E11D48' : '#FFFFFF'} />
+          <Heart size={16} fill={liked ? '#E11D48' : 'none'} color={liked ? '#E11D48' : '#FFFFFF'} />
         </button>
       </div>
 
@@ -47,7 +61,7 @@ export default function ListingCard({ listing, displayTax }) {
         <div style={{ fontSize: '0.95rem', fontWeight: '600' }}>
           {displayTax ? (
             <>
-              <span style={{ fontWeight: '800' }}>₹{taxPrice.toLocaleString('en-IN')}</span> <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--text-muted)' }}>total before taxes</span>
+              <span style={{ fontWeight: '800' }}>₹{taxPrice.toLocaleString('en-IN')}</span> <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--text-muted)' }}>total includes taxes</span>
             </>
           ) : (
             <>
@@ -59,3 +73,4 @@ export default function ListingCard({ listing, displayTax }) {
     </Link>
   );
 }
+

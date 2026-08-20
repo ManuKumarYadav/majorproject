@@ -56,7 +56,9 @@ export default function FilterBar({ selectedCategory, onSelectCategory, displayT
           border: '1.5px solid var(--border-color)', background: 'var(--light-bg)',
           whiteSpace: 'nowrap', flexShrink: 0
         }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>Display total before taxes</span>
+          <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+            {displayTax ? 'Display total includes taxes' : 'Display total before taxes'}
+          </span>
           <label style={{ position: 'relative', display: 'inline-block', width: '42px', height: '24px', cursor: 'pointer' }}>
             <input 
               type="checkbox" 
