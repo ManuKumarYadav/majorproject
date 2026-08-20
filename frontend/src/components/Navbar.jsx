@@ -42,21 +42,22 @@ export default function Navbar({ onSearch }) {
               width: '44px', height: '44px', borderRadius: '12px',
               background: 'var(--primary-gradient)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#FFFFFF', boxShadow: '0 4px 14px rgba(225,29,72,0.3)'
+              color: '#FFFFFF', boxShadow: '0 4px 14px rgba(225,29,72,0.3)', flexShrink: 0
             }}>
               <Compass size={24} />
             </div>
             <div>
-              <span style={{ fontSize: '1.45rem', fontWeight: '800', letterSpacing: '-0.5px', color: 'var(--primary)' }}>
+              <span className="navbar-brand-title" style={{ fontSize: '1.45rem', fontWeight: '800', letterSpacing: '-0.5px', color: 'var(--primary)' }}>
                 StayAira
               </span>
-              <span style={{ display: 'block', fontSize: '0.65rem', fontWeight: '700', letterSpacing: '1px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              <span className="navbar-tagline" style={{ display: 'block', fontSize: '0.65rem', fontWeight: '700', letterSpacing: '1px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
                 Vista Stays. Better Days.
               </span>
             </div>
           </Link>
 
           <div
+            className="navbar-search-pill"
             onClick={() => setSearchModalOpen(true)}
             style={{
               display: 'flex', alignItems: 'center', gap: '1rem',
@@ -66,24 +67,26 @@ export default function Navbar({ onSearch }) {
               cursor: 'pointer'
             }}
           >
-            <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>Anywhere</span>
-            <span style={{ height: '16px', width: '1px', background: 'var(--border-color)' }}></span>
-            <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>Any week</span>
-            <span style={{ height: '16px', width: '1px', background: 'var(--border-color)' }}></span>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Add guests</span>
+            <span className="navbar-search-text" style={{ fontSize: '0.9rem', fontWeight: '600' }}>Anywhere</span>
+            <span className="navbar-search-divider" style={{ height: '16px', width: '1px', background: 'var(--border-color)' }}></span>
+            <span className="navbar-search-text" style={{ fontSize: '0.9rem', fontWeight: '600' }}>Any week</span>
+            <span className="navbar-search-divider" style={{ height: '16px', width: '1px', background: 'var(--border-color)' }}></span>
+            <span className="navbar-search-text" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Add guests</span>
+            <span className="navbar-search-mobile-label">Where to?</span>
             <div style={{
               width: '34px', height: '34px', borderRadius: '50%',
               background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#FFFFFF'
+              color: '#FFFFFF', flexShrink: 0
             }}>
               <Search size={16} />
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {/* Switch to hosting / Switch to travelling toggle */}
             <button
               id="mode-switch-btn"
+              className="navbar-mode-btn"
               onClick={handleSwitchMode}
               onMouseEnter={() => setSwitchHover(true)}
               onMouseLeave={() => setSwitchHover(false)}
@@ -91,7 +94,6 @@ export default function Navbar({ onSearch }) {
               style={{
                 display: 'flex', alignItems: 'center', gap: '0.5rem',
                 padding: '0.5rem 1.1rem',
-                // host mode: solid red pill; traveller mode: outlined pill
                 background: isHostView
                   ? (switchHover ? '#c0112e' : '#E11D48')
                   : (switchHover ? 'var(--card-bg)' : 'transparent'),
@@ -127,7 +129,7 @@ export default function Navbar({ onSearch }) {
                 width: '40px', height: '40px', borderRadius: '50%',
                 background: 'var(--card-bg)', border: '1px solid var(--border-color)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--text-main)', cursor: 'pointer'
+                color: 'var(--text-main)', cursor: 'pointer', flexShrink: 0
               }}
               title="Toggle Theme"
             >
@@ -138,10 +140,10 @@ export default function Navbar({ onSearch }) {
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '0.65rem',
-                  padding: '0.4rem 0.6rem 0.4rem 0.9rem',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  padding: '0.4rem 0.6rem 0.4rem 0.8rem',
                   background: 'var(--card-bg)', border: '1.5px solid var(--border-color)',
-                  borderRadius: '9999px', cursor: 'pointer', boxShadow: 'var(--shadow-sm)'
+                  borderRadius: '9999px', cursor: 'pointer', boxShadow: 'var(--shadow-sm)', flexShrink: 0
                 }}
               >
                 <Menu size={18} />
@@ -150,7 +152,7 @@ export default function Navbar({ onSearch }) {
                   background: user?.avatar?.url ? 'transparent' : 'linear-gradient(135deg,#E11D48,#f43f5e)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: '#FFFFFF', fontWeight: '700', fontSize: '0.85rem',
-                  overflow: 'hidden',
+                  overflow: 'hidden', flexShrink: 0
                 }}>
                   {user?.avatar?.url
                     ? <img src={user.avatar.url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -171,6 +173,20 @@ export default function Navbar({ onSearch }) {
                   }}
                   onClick={() => setDropdownOpen(false)}
                 >
+                  <button
+                    onClick={handleSwitchMode}
+                    className="mobile-only-dropdown-item"
+                    style={{
+                      alignItems: 'center', gap: '0.65rem', padding: '0.75rem 1.25rem',
+                      fontSize: '0.9rem', fontWeight: '700', color: 'var(--primary)',
+                      borderBottom: '1px solid var(--border-color)', width: '100%',
+                      background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left'
+                    }}
+                  >
+                    {isHostView ? <Plane size={16} /> : <Home size={16} />}
+                    {isHostView ? 'Switch to Travelling' : 'Switch to Hosting'}
+                  </button>
+
                   {user ? (
                     <>
                       {/* Profile header with avatar */}

@@ -232,12 +232,12 @@ export default function ListingDetail() {
       </div>
 
       {/* Hero Image Showcase */}
-      <div style={{ borderRadius: '24px', overflow: 'hidden', height: '460px', width: '100%', marginBottom: '2.5rem', boxShadow: 'var(--shadow-md)' }}>
+      <div className="detail-hero-image" style={{ borderRadius: '24px', overflow: 'hidden', height: '460px', width: '100%', marginBottom: '2.5rem', boxShadow: 'var(--shadow-md)' }}>
         <img src={imageUrl} alt={listing.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
 
       {/* Two Columns Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '3.5rem', alignItems: 'start' }}>
+      <div className="detail-layout-grid">
         
         {/* Left Column: Details, Host Bio, AirCover, Amenities, Reviews, Map */}
         <div>

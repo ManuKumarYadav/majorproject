@@ -22,9 +22,9 @@ const CATEGORIES = [
 export default function FilterBar({ selectedCategory, onSelectCategory, displayTax, onToggleTax }) {
   return (
     <div style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--card-bg)', position: 'sticky', top: '80px', zIndex: 40 }}>
-      <div className="stayaira-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', padding: '0.75rem 1.5rem' }}>
+      <div className="stayaira-container filter-bar-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', padding: '0.75rem 1.5rem' }}>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', overflowX: 'auto', scrollbarWidth: 'none', padding: '0.25rem 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', overflowX: 'auto', scrollbarWidth: 'none', padding: '0.25rem 0', flex: 1, minWidth: 0 }}>
           {CATEGORIES.map(cat => {
             const Icon = cat.icon;
             const active = (selectedCategory === cat.id) || (!selectedCategory && cat.id === 'All');
@@ -38,7 +38,7 @@ export default function FilterBar({ selectedCategory, onSelectCategory, displayT
                   padding: '0.4rem 0.2rem', minWidth: '68px',
                   color: active ? 'var(--primary)' : 'var(--text-muted)',
                   borderBottom: active ? '2.5px solid var(--primary)' : '2.5px solid transparent',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease', flexShrink: 0
                 }}
               >
                 <Icon size={22} />
@@ -50,7 +50,7 @@ export default function FilterBar({ selectedCategory, onSelectCategory, displayT
           })}
         </div>
 
-        <div style={{
+        <div className="filter-tax-toggle" style={{
           display: 'flex', alignItems: 'center', gap: '0.75rem',
           padding: '0.6rem 1.1rem', borderRadius: '14px',
           border: '1.5px solid var(--border-color)', background: 'var(--light-bg)',

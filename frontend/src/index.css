@@ -115,3 +115,79 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer; transition: all 0.2s ease;
 }
 .wishlist-btn:hover, .wishlist-btn.active { color: #E11D48; background: rgba(255, 255, 255, 0.9); }
+
+/* RESPONSIVE LAYOUT & MEDIA QUERIES */
+
+/* Navbar responsive helpers */
+.navbar-search-mobile-label { display: none; }
+.mobile-only-dropdown-item { display: none !important; }
+
+@media (max-width: 992px) {
+  .detail-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 880px) {
+  .navbar-mode-btn {
+    display: none !important;
+  }
+  .navbar-tagline {
+    display: none !important;
+  }
+  .mobile-only-dropdown-item {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .stayaira-container {
+    padding: 0 1rem;
+  }
+  .filter-bar-container {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+  .filter-tax-toggle {
+    width: 100%;
+    justify-content: space-between !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar-search-pill {
+    padding: 0.4rem 0.6rem !important;
+    gap: 0.4rem !important;
+  }
+  .navbar-search-text,
+  .navbar-search-divider {
+    display: none !important;
+  }
+  .navbar-search-mobile-label {
+    display: inline !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .listings-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .stayaira-container {
+    padding: 0 0.75rem;
+  }
+  .navbar-brand-title {
+    font-size: 1.25rem !important;
+  }
+  .btn-primary-stayaira,
+  .btn-outline-stayaira {
+    padding: 0.55rem 1.1rem;
+    font-size: 0.85rem;
+  }
+}
+
