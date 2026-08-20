@@ -28,9 +28,25 @@ async function main() {
 }
 main().catch(err => console.error("MongoDB Connection Error:", err));
 
-// Enable CORS for React Vite Frontend
+// Enable trust proxy on Render/cloud hosts behind reverse proxies
+app.set("trust proxy", 1);
+
+// Enable CORS for React Vite Frontend (Local + Vercel deployment)
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:8080",
+    "http://127.0.0.1:5173",
+    process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:8080", "http://127.0.0.1:5173"],
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+            return callback(null, true);
+        }
+        return callback(null, true);
+    },
     credentials: true
 }));
 
@@ -52,15 +68,19 @@ store.on("error", (err) => {
     console.error("Error in Mongo Session store:", err);
 });
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const sessionOptions = {
     store,
-    secret: process.env.SECRET,
+    secret: process.env.SECRET || "stayaira_super_secret_session_key",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax"
     },
 };
 
