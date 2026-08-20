@@ -98,9 +98,25 @@ export default function ListingDetail() {
     const d1 = new Date();
     d1.setDate(d1.getDate() + 1);
     const d2 = new Date();
-    d2.setDate(d2.getDate() + 3);
+    d2.setDate(d2.getDate() + 4);
     setCheckIn(d1.toISOString().split('T')[0]);
     setCheckOut(d2.toISOString().split('T')[0]);
+  };
+
+  const handleSelectDay = (dayNum, monthOffset = 0) => {
+    const today = new Date();
+    const targetYear = today.getFullYear();
+    const targetMonth = today.getMonth() + monthOffset;
+    
+    const selectedStart = new Date(targetYear, targetMonth, dayNum);
+    const selectedEnd = new Date(targetYear, targetMonth, dayNum + 3);
+
+    setCheckIn(selectedStart.toISOString().split('T')[0]);
+    setCheckOut(selectedEnd.toISOString().split('T')[0]);
+    
+    // Smooth scroll to payment card
+    const el = document.getElementById('booking-card');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const scrollToSection = (id) => {
@@ -374,17 +390,25 @@ export default function ListingDetail() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontSize: '0.85rem' }}>
                       {[...Array(31)].map((_, i) => {
                         const dayNum = i + 1;
-                        const isSelected = dayNum >= 28 && dayNum <= 30;
+                        const cInDate = new Date(checkIn);
+                        const cOutDate = new Date(checkOut);
+                        const curDate = new Date(cInDate.getFullYear(), cInDate.getMonth(), dayNum);
+                        const isSelected = curDate >= new Date(cInDate.getFullYear(), cInDate.getMonth(), cInDate.getDate()) &&
+                                           curDate <= new Date(cOutDate.getFullYear(), cOutDate.getMonth(), cOutDate.getDate());
+
                         return (
                           <div 
                             key={i} 
+                            onClick={() => handleSelectDay(dayNum, 0)}
                             style={{
                               padding: '8px 0', borderRadius: '50%',
-                              background: isSelected ? '#0F172A' : 'transparent',
+                              background: isSelected ? 'var(--primary)' : 'transparent',
                               color: isSelected ? '#FFFFFF' : 'inherit',
                               fontWeight: isSelected ? '700' : '500',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
                             }}
+                            title={`Select check-in for ${dayNum}`}
                           >
                             {dayNum}
                           </div>
@@ -395,7 +419,7 @@ export default function ListingDetail() {
 
                   <div className="calendar-month-2">
                     <h4 style={{ fontSize: '0.95rem', fontWeight: '700', marginBottom: '0.75rem', textAlign: 'center' }}>
-                      September 2026
+                      Next Month
                     </h4>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px' }}>
                       <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
@@ -403,8 +427,26 @@ export default function ListingDetail() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontSize: '0.85rem' }}>
                       {[...Array(30)].map((_, i) => {
                         const dayNum = i + 1;
+                        const cInDate = new Date(checkIn);
+                        const cOutDate = new Date(checkOut);
+                        const curDate = new Date(cInDate.getFullYear(), cInDate.getMonth() + 1, dayNum);
+                        const isSelected = curDate >= new Date(cInDate.getFullYear(), cInDate.getMonth(), cInDate.getDate()) &&
+                                           curDate <= new Date(cOutDate.getFullYear(), cOutDate.getMonth(), cOutDate.getDate());
+
                         return (
-                          <div key={i} style={{ padding: '8px 0', borderRadius: '50%', color: 'inherit' }}>
+                          <div 
+                            key={i} 
+                            onClick={() => handleSelectDay(dayNum, 1)}
+                            style={{
+                              padding: '8px 0', borderRadius: '50%',
+                              background: isSelected ? 'var(--primary)' : 'transparent',
+                              color: isSelected ? '#FFFFFF' : 'inherit',
+                              fontWeight: isSelected ? '700' : '500',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            title={`Select check-in for next month ${dayNum}`}
+                          >
                             {dayNum}
                           </div>
                         );
