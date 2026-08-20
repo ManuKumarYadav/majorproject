@@ -118,8 +118,12 @@ a { color: inherit; text-decoration: none; }
 
 /* RESPONSIVE LAYOUT & MEDIA QUERIES */
 
-/* Navbar responsive helpers */
-.navbar-search-mobile-label { display: none; }
+/* Container & layout helper classes */
+.listings-index-container { padding: 2rem 1.5rem; }
+.navbar-header-container { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+.detail-main-container { padding: 2rem 1.5rem 4rem; }
+
+.navbar-search-mobile-label { display: none !important; }
 .mobile-only-dropdown-item { display: none !important; }
 
 @media (max-width: 992px) {
@@ -143,16 +147,22 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 768px) {
   .stayaira-container {
-    padding: 0 1rem;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .listings-index-container,
+  .detail-main-container {
+    padding-top: 1rem !important;
+    padding-bottom: 2rem !important;
   }
   .filter-bar-container {
-    flex-direction: column;
+    flex-direction: column !important;
     align-items: stretch !important;
     gap: 0.75rem !important;
     padding: 0.5rem 1rem !important;
   }
   .filter-tax-toggle {
-    width: 100%;
+    width: 100% !important;
     justify-content: space-between !important;
   }
 }
@@ -168,8 +178,8 @@ a { color: inherit; text-decoration: none; }
   }
   .navbar-search-mobile-label {
     display: inline !important;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
   }
   .listings-grid {
     grid-template-columns: 1fr !important;
@@ -179,15 +189,17 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 480px) {
   .stayaira-container {
-    padding: 0 0.75rem;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
   }
   .navbar-brand-title {
-    font-size: 1.25rem !important;
+    font-size: 1.2rem !important;
   }
   .btn-primary-stayaira,
   .btn-outline-stayaira {
-    padding: 0.55rem 1.1rem;
-    font-size: 0.85rem;
+    padding: 0.55rem 1.1rem !important;
+    font-size: 0.85rem !important;
   }
 }
+
 
