@@ -233,10 +233,10 @@ export default function ListingDetail() {
   const ownerName = listing.owner ? (listing.owner.fullName || listing.owner.username) : 'Sameer';
 
   return (
-    <>
+    <div className="detail-page-wrapper">
       {/* Sticky Secondary Navigation Bar */}
       {showSubNav && (
-        <div style={{
+        <div className="detail-sub-nav" style={{
           position: 'sticky', top: '80px', zIndex: 48, background: 'var(--card-bg)',
           borderBottom: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)', transition: 'all 0.3s ease'
         }}>
@@ -393,7 +393,7 @@ export default function ListingDetail() {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="calendar-month-2">
                     <h4 style={{ fontSize: '0.95rem', fontWeight: '700', marginBottom: '0.75rem', textAlign: 'center' }}>
                       September 2026
                     </h4>
@@ -581,7 +581,7 @@ export default function ListingDetail() {
           </div>
 
           {/* Right Column: Sticky Airbnb-Style Booking Widget */}
-          <div style={{ position: 'sticky', top: '100px' }}>
+          <div className="detail-booking-sidebar" style={{ position: 'sticky', top: '100px' }}>
             {/* Top Prices Include All Fees Pill */}
             <div style={{
               background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '16px',
@@ -682,6 +682,21 @@ export default function ListingDetail() {
 
       </div>
 
+      {/* Mobile Bottom Sticky Reserve Bar (Airbnb Style) */}
+      <div className="mobile-detail-reserve-bar">
+        <div>
+          <p style={{ fontSize: '1.05rem', fontWeight: '800', margin: 0, color: 'var(--text-main)' }}>
+            ₹{nightPrice.toLocaleString('en-IN')} <span style={{ fontSize: '0.8rem', fontWeight: '500', color: 'var(--text-muted)' }}>for {totalNights} nights</span>
+          </p>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, textDecoration: 'underline' }}>
+            {new Date(checkIn).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} – {new Date(checkOut).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+          </p>
+        </div>
+        <button onClick={handleReserve} disabled={paying} className="btn-primary-stayaira" style={{ padding: '0.65rem 1.4rem' }}>
+          {paying ? 'Initiating...' : 'Reserve'}
+        </button>
+      </div>
+
       {/* Host Message Dialog */}
       {hostMsgModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -696,6 +711,6 @@ export default function ListingDetail() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
