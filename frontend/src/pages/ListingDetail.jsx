@@ -6,7 +6,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { 
   Star, Share2, Heart, ShieldCheck, Sparkles, MapPin, 
   Calendar, Users, CheckCircle2, MessageSquare, Trash2, Edit,
-  Tag, Flag, Award, MessageCircle, RotateCcw, Briefcase, Music, ChevronRight
+  Tag, Flag, Award, MessageCircle, RotateCcw, Briefcase, Music, ChevronRight, ChevronLeft, Keyboard
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -19,6 +19,11 @@ export default function ListingDetail() {
   const [loading, setLoading] = useState(true);
   const [showSubNav, setShowSubNav] = useState(false);
   const [hostMsgModal, setHostMsgModal] = useState(false);
+
+  // Calendar Month Navigation
+  const [calYear, setCalYear] = useState(() => new Date().getFullYear());
+  const [calMonthIndex, setCalMonthIndex] = useState(() => new Date().getMonth());
+  const [selectingCheckout, setSelectingCheckout] = useState(false);
 
   const [checkIn, setCheckIn] = useState(() => {
     const d = new Date();
@@ -103,18 +108,36 @@ export default function ListingDetail() {
     setCheckOut(d2.toISOString().split('T')[0]);
   };
 
-  const handleSelectDay = (dayNum, monthOffset = 0) => {
-    const today = new Date();
-    const targetYear = today.getFullYear();
-    const targetMonth = today.getMonth() + monthOffset;
-    
-    const selectedStart = new Date(targetYear, targetMonth, dayNum);
-    const selectedEnd = new Date(targetYear, targetMonth, dayNum + 3);
+  const handlePrevMonth = () => {
+    if (calMonthIndex === 0) {
+      setCalMonthIndex(11);
+      setCalYear(prev => prev - 1);
+    } else {
+      setCalMonthIndex(prev => prev - 1);
+    }
+  };
 
-    setCheckIn(selectedStart.toISOString().split('T')[0]);
-    setCheckOut(selectedEnd.toISOString().split('T')[0]);
-    
-    // Smooth scroll to payment card
+  const handleNextMonth = () => {
+    if (calMonthIndex === 11) {
+      setCalMonthIndex(0);
+      setCalYear(prev => prev + 1);
+    } else {
+      setCalMonthIndex(prev => prev + 1);
+    }
+  };
+
+  const handleDayClick = (dateStr) => {
+    if (!selectingCheckout || dateStr <= checkIn) {
+      setCheckIn(dateStr);
+      const nextDay = new Date(dateStr);
+      nextDay.setDate(nextDay.getDate() + 2);
+      setCheckOut(nextDay.toISOString().split('T')[0]);
+      setSelectingCheckout(true);
+    } else {
+      setCheckOut(dateStr);
+      setSelectingCheckout(false);
+    }
+
     const el = document.getElementById('booking-card');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
@@ -124,6 +147,83 @@ export default function ListingDetail() {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
+
+  // Render Single Calendar Month Grid
+  const renderMonthCalendar = (year, monthIdx, isMobileSecond = false) => {
+    const monthDate = new Date(year, monthIdx, 1);
+    const monthName = monthDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const firstDay = monthDate.getDay();
+    const totalDays = new Date(year, monthIdx + 1, 0).getDate();
+
+    const blanks = Array.from({ length: firstDay }, (_, i) => i);
+    const days = Array.from({ length: totalDays }, (_, i) => i + 1);
+
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    return (
+      <div className={isMobileSecond ? "calendar-month-2" : ""} style={{ flex: 1, minWidth: '240px' }}>
+        <h4 style={{ fontSize: '0.95rem', fontWeight: '700', marginBottom: '0.75rem', textAlign: 'center' }}>
+          {monthName}
+        </h4>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px' }}>
+          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center', fontSize: '0.85rem' }}>
+          {blanks.map(b => (
+            <div key={`blank-${b}`} style={{ height: '36px' }}></div>
+          ))}
+          {days.map(d => {
+            const currentObj = new Date(year, monthIdx, d);
+            const yyyy = currentObj.getFullYear();
+            const mm = String(currentObj.getMonth() + 1).padStart(2, '0');
+            const dd = String(d).padStart(2, '0');
+            const dateStr = `${yyyy}-${mm}-${dd}`;
+            
+            const isStart = checkIn === dateStr;
+            const isEnd = checkOut === dateStr;
+            const isInRange = dateStr >= checkIn && dateStr <= checkOut;
+            const isPast = dateStr < todayStr;
+
+            let bg = 'transparent';
+            let color = 'inherit';
+
+            if (isStart || isEnd) {
+              bg = '#0F172A';
+              color = '#FFFFFF';
+            } else if (isInRange) {
+              bg = 'rgba(15, 23, 42, 0.08)';
+            }
+
+            if (isPast) {
+              color = 'var(--border-color)';
+            }
+
+            return (
+              <div
+                key={d}
+                onClick={() => !isPast && handleDayClick(dateStr)}
+                style={{
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: (isStart || isEnd) ? '50%' : '6px',
+                  background: bg,
+                  color,
+                  fontWeight: (isStart || isEnd) ? '700' : '500',
+                  cursor: isPast ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+                title={isPast ? 'Past date' : `Select date ${dateStr}`}
+              >
+                {d}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
   };
 
   // Razorpay Checkout
@@ -367,7 +467,7 @@ export default function ListingDetail() {
             </div>
 
             {/* Interactive Date Selection / Nights Section */}
-            <div style={{ paddingBottom: '2.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '2.5rem' }}>
+            <div id="calendar-section" style={{ paddingBottom: '2.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '2.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                 <h3 style={{ fontSize: '1.35rem', fontWeight: '800' }}>
                   {totalNights} {totalNights === 1 ? 'night' : 'nights'} in {listing.location}
@@ -378,85 +478,28 @@ export default function ListingDetail() {
               </p>
 
               {/* Interactive Date Calendar Grid */}
-              <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '20px', padding: '1.5rem', marginBottom: '1rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
-                  <div>
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: '700', marginBottom: '0.75rem', textAlign: 'center' }}>
-                      {new Date(checkIn).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                    </h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                      <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontSize: '0.85rem' }}>
-                      {[...Array(31)].map((_, i) => {
-                        const dayNum = i + 1;
-                        const cInDate = new Date(checkIn);
-                        const cOutDate = new Date(checkOut);
-                        const curDate = new Date(cInDate.getFullYear(), cInDate.getMonth(), dayNum);
-                        const isSelected = curDate >= new Date(cInDate.getFullYear(), cInDate.getMonth(), cInDate.getDate()) &&
-                                           curDate <= new Date(cOutDate.getFullYear(), cOutDate.getMonth(), cOutDate.getDate());
+              <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '20px', padding: '1.5rem', marginBottom: '1rem', position: 'relative' }}>
+                
+                {/* Month Navigation Arrows */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', position: 'absolute', top: '1.5rem', left: '1.5rem', right: '1.5rem', pointerEvents: 'none', zIndex: 2 }}>
+                  <button onClick={handlePrevMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', pointerEvents: 'auto', padding: '4px' }}>
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button onClick={handleNextMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', pointerEvents: 'auto', padding: '4px' }}>
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
 
-                        return (
-                          <div 
-                            key={i} 
-                            onClick={() => handleSelectDay(dayNum, 0)}
-                            style={{
-                              padding: '8px 0', borderRadius: '50%',
-                              background: isSelected ? 'var(--primary)' : 'transparent',
-                              color: isSelected ? '#FFFFFF' : 'inherit',
-                              fontWeight: isSelected ? '700' : '500',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            title={`Select check-in for ${dayNum}`}
-                          >
-                            {dayNum}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="calendar-month-2">
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: '700', marginBottom: '0.75rem', textAlign: 'center' }}>
-                      Next Month
-                    </h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                      <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontSize: '0.85rem' }}>
-                      {[...Array(30)].map((_, i) => {
-                        const dayNum = i + 1;
-                        const cInDate = new Date(checkIn);
-                        const cOutDate = new Date(checkOut);
-                        const curDate = new Date(cInDate.getFullYear(), cInDate.getMonth() + 1, dayNum);
-                        const isSelected = curDate >= new Date(cInDate.getFullYear(), cInDate.getMonth(), cInDate.getDate()) &&
-                                           curDate <= new Date(cOutDate.getFullYear(), cOutDate.getMonth(), cOutDate.getDate());
-
-                        return (
-                          <div 
-                            key={i} 
-                            onClick={() => handleSelectDay(dayNum, 1)}
-                            style={{
-                              padding: '8px 0', borderRadius: '50%',
-                              background: isSelected ? 'var(--primary)' : 'transparent',
-                              color: isSelected ? '#FFFFFF' : 'inherit',
-                              fontWeight: isSelected ? '700' : '500',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            title={`Select check-in for next month ${dayNum}`}
-                          >
-                            {dayNum}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+                  {renderMonthCalendar(calYear, calMonthIndex, false)}
+                  {renderMonthCalendar(calMonthIndex === 11 ? calYear + 1 : calYear, calMonthIndex === 11 ? 0 : calMonthIndex + 1, true)}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  <Keyboard size={16} /> Keyboard shortcuts
+                </div>
                 <button onClick={handleClearDates} style={{ background: 'none', border: 'none', color: 'var(--text-main)', textDecoration: 'underline', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <RotateCcw size={14} /> Clear dates
                 </button>
@@ -623,7 +666,7 @@ export default function ListingDetail() {
           </div>
 
           {/* Right Column: Sticky Airbnb-Style Booking Widget */}
-          <div className="detail-booking-sidebar" style={{ position: 'sticky', top: '100px' }}>
+          <div id="booking-card" className="detail-booking-sidebar">
             {/* Top Prices Include All Fees Pill */}
             <div style={{
               background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '16px',
@@ -651,15 +694,24 @@ export default function ListingDetail() {
               </div>
 
               {/* Date Inputs Box */}
-              <div style={{ border: '1.5px solid var(--border-color)', borderRadius: '16px', overflow: 'hidden', marginBottom: '1rem' }}>
+              <div 
+                onClick={() => scrollToSection('calendar-section')}
+                style={{ border: '1.5px solid var(--border-color)', borderRadius: '16px', overflow: 'hidden', marginBottom: '1rem', cursor: 'pointer' }}
+              >
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: '1px solid var(--border-color)' }}>
                   <div style={{ padding: '0.6rem 0.9rem' }}>
                     <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--text-muted)' }}>CHECK-IN</label>
-                    <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} style={{ border: 'none', background: 'transparent', width: '100%', fontSize: '0.85rem', fontWeight: '600', color: 'inherit' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} style={{ border: 'none', background: 'transparent', width: '100%', fontSize: '0.85rem', fontWeight: '600', color: 'inherit' }} />
+                      <Calendar size={14} color="var(--text-muted)" />
+                    </div>
                   </div>
                   <div style={{ padding: '0.6rem 0.9rem', borderLeft: '1px solid var(--border-color)' }}>
                     <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', color: 'var(--text-muted)' }}>CHECKOUT</label>
-                    <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} style={{ border: 'none', background: 'transparent', width: '100%', fontSize: '0.85rem', fontWeight: '600', color: 'inherit' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} style={{ border: 'none', background: 'transparent', width: '100%', fontSize: '0.85rem', fontWeight: '600', color: 'inherit' }} />
+                      <Calendar size={14} color="var(--text-muted)" />
+                    </div>
                   </div>
                 </div>
                 <div style={{ padding: '0.6rem 0.9rem' }}>
