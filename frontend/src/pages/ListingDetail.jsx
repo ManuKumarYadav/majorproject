@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { 
-  Star, Share2, Heart, ShieldCheck, Sparkles, MapPin, 
+import LiveMap from '../components/LiveMap';
+import {
+  Star, Share2, Heart, ShieldCheck, Sparkles, MapPin,
   Calendar, Users, CheckCircle2, MessageSquare, Trash2, Edit,
   Tag, Flag, Award, MessageCircle, RotateCcw, Briefcase, Music, ChevronRight, ChevronLeft, Keyboard
 } from 'lucide-react';
@@ -179,7 +179,7 @@ export default function ListingDetail() {
             const mm = String(currentObj.getMonth() + 1).padStart(2, '0');
             const dd = String(d).padStart(2, '0');
             const dateStr = `${yyyy}-${mm}-${dd}`;
-            
+
             const isStart = checkIn === dateStr;
             const isEnd = checkOut === dateStr;
             const isInRange = dateStr >= checkIn && dateStr <= checkOut;
@@ -380,7 +380,7 @@ export default function ListingDetail() {
       )}
 
       <div className="stayaira-container detail-main-container" style={{ padding: '2rem 1.5rem 4rem' }}>
-        
+
         {/* Title & Actions */}
         <div id="photos" style={{ marginBottom: '1.2rem' }}>
           <h1 style={{ fontSize: '1.85rem', fontWeight: '800', marginBottom: '0.4rem' }}>{listing.title}</h1>
@@ -412,10 +412,10 @@ export default function ListingDetail() {
 
         {/* Two Columns Grid */}
         <div className="detail-layout-grid">
-          
+
           {/* Left Column */}
           <div>
-            
+
             {/* Host Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
               <div>
@@ -442,16 +442,6 @@ export default function ListingDetail() {
               </p>
             </div>
 
-            {/* StayAira AirCover Banner */}
-            <div style={{ background: 'rgba(225,29,72,0.05)', border: '1.5px solid rgba(225,29,72,0.2)', borderRadius: '20px', padding: '1.75rem', marginBottom: '2.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '1.5rem', fontWeight: '900', color: '#E11D48' }}>air</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--text-main)' }}>cover</span>
-              </div>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-                Every booking includes free protection from Host cancellations, listing inaccuracies, and other issues like trouble checking in.
-              </p>
-            </div>
 
             {/* Amenities Section */}
             <div id="amenities" style={{ paddingBottom: '2rem', borderBottom: '1px solid var(--border-color)', marginBottom: '2.5rem' }}>
@@ -479,7 +469,7 @@ export default function ListingDetail() {
 
               {/* Interactive Date Calendar Grid */}
               <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '20px', padding: '1.5rem', marginBottom: '1rem', position: 'relative' }}>
-                
+
                 {/* Month Navigation Arrows */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', position: 'absolute', top: '1.5rem', left: '1.5rem', right: '1.5rem', pointerEvents: 'none', zIndex: 2 }}>
                   <button onClick={handlePrevMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', pointerEvents: 'auto', padding: '4px' }}>
@@ -506,92 +496,164 @@ export default function ListingDetail() {
               </div>
             </div>
 
-            {/* Meet Your Host Section (Airbnb Style) */}
-            <div style={{ paddingBottom: '2.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '2.5rem' }}>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem' }}>Meet your host</h3>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', alignItems: 'start' }}>
-                
-                {/* Left Host Profile Card */}
-                <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2rem', boxShadow: 'var(--shadow-md)', textAlign: 'center' }}>
-                  <div style={{ width: '96px', height: '96px', borderRadius: '50%', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '2.2rem', fontWeight: '800', margin: '0 auto 1rem', position: 'relative' }}>
-                    {ownerName.slice(0, 1).toUpperCase()}
-                    <div style={{ position: 'absolute', bottom: 2, right: 2, width: '28px', height: '28px', borderRadius: '50%', background: '#E11D48', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid #fff' }}>
-                      <Award size={14} />
+            {/* ── Meet Your Host ─ Airbnb Style ── */}
+            <div id="host" style={{ paddingBottom: '2.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '2.5rem' }}>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.75rem' }}>Meet your host</h3>
+
+              {/* Airbnb two-panel layout */}
+              <div className="meet-host-grid">
+
+                {/* ── LEFT: Profile stat card (clickable → /host/:id) ── */}
+                <Link
+                  to={`/host/${listing.owner?._id || listing.owner}`}
+                  className="host-profile-card host-profile-card-link"
+                  title={`View ${ownerName}'s full profile`}
+                >
+                  {/* Avatar */}
+                  <div className="host-avatar-wrap">
+                    {listing.owner?.avatar?.url ? (
+                      <img
+                        src={listing.owner.avatar.url}
+                        alt={ownerName}
+                        className="host-avatar-circle"
+                        style={{ objectFit: 'cover', fontSize: 'unset' }}
+                      />
+                    ) : (
+                      <div className="host-avatar-circle">
+                        {ownerName.slice(0, 1).toUpperCase()}
+                      </div>
+                    )}
+                    {/* Superhost medal */}
+                    <div className="host-medal">
+                      <Award size={13} color="#fff" />
                     </div>
                   </div>
-                  <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '2px' }}>{ownerName}</h3>
-                  <p style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>🏆 Superhost</p>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-around', borderTop: '1px solid var(--border-color)', paddingTop: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
-                    <div>
-                      <p style={{ fontSize: '1.2rem', fontWeight: '900' }}>65</p>
-                      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700' }}>Reviews</p>
-                    </div>
-                    <div>
-                      <p style={{ fontSize: '1.2rem', fontWeight: '900' }}>4.83 ★</p>
-                      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700' }}>Rating</p>
-                    </div>
-                    <div>
-                      <p style={{ fontSize: '1.2rem', fontWeight: '900' }}>8</p>
-                      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700' }}>Months hosting</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Host Details & Bio */}
-                <div>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '0.4rem' }}>{ownerName} is a Superhost</h4>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
-                    Superhosts are experienced, highly rated hosts who are committed to providing great stays for guests.
+                  {/* Name + title */}
+                  <h3 className="host-card-name">{ownerName}</h3>
+                  <p className="host-card-since">
+                    Host · Member since {listing.owner?.createdAt
+                      ? new Date(listing.owner.createdAt).getFullYear()
+                      : '2023'}
                   </p>
 
-                  <h4 style={{ fontSize: '1rem', fontWeight: '800', marginBottom: '0.5rem' }}>Host details</h4>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Response rate: 100%</p>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Responds within an hour</p>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem', color: 'var(--text-main)', marginBottom: '1.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                      <Briefcase size={18} color="var(--primary)" />
-                      <span><strong>My work:</strong> Hospitality & Real Estate</span>
+                  {/* Stats row */}
+                  <div className="host-stats-row">
+                    <div className="host-stat-item">
+                      <span className="host-stat-number">
+                        {listing.reviews ? listing.reviews.length : 65}
+                      </span>
+                      <span className="host-stat-label">Reviews</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                      <Music size={18} color="var(--primary)" />
-                      <span><strong>Favourite song:</strong> Tujhe Dekha Toh Yaara</span>
+                    <div className="host-stat-divider" />
+                    <div className="host-stat-item">
+                      <span className="host-stat-number">4.83 ★</span>
+                      <span className="host-stat-label">Rating</span>
+                    </div>
+                    <div className="host-stat-divider" />
+                    <div className="host-stat-item">
+                      <span className="host-stat-number">3+</span>
+                      <span className="host-stat-label">Years hosting</span>
                     </div>
                   </div>
 
-                  <button 
-                    onClick={() => setHostMsgModal(true)} 
-                    className="btn-outline-stayaira" 
-                    style={{ padding: '0.65rem 1.4rem', borderRadius: '12px', fontSize: '0.9rem' }}
+                  {/* Superhost badge */}
+                  <div className="host-superhost-badge">
+                    <span style={{ fontSize: '1.1rem' }}>🏆</span>
+                    <div>
+                      <p style={{ fontWeight: '800', fontSize: '0.88rem', margin: 0, color: 'var(--text-main)' }}>Superhost</p>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>Consistently highly rated</p>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* ── RIGHT: Host bio + details ── */}
+                <div className="host-bio-col">
+
+                  {/* My bio */}
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <p style={{ fontSize: '0.95rem', lineHeight: '1.75', color: 'var(--text-main)' }}>
+                      Hey there! I'm {ownerName.split(' ')[0]}, a passionate host and travel enthusiast dedicated to giving every guest a memorable, 5-star experience.
+                      I've personally curated every corner of this villa to feel like a home away from home — with luxury touches, fresh linens, and a fully stocked kitchen. 🌿
+                    </p>
+                  </div>
+
+                  {/* Personal info chips */}
+                  <div className="host-info-chips">
+                    <div className="host-chip">
+                      <Briefcase size={15} color="var(--primary)" />
+                      <span>Hospitality &amp; Real Estate</span>
+                    </div>
+                    <div className="host-chip">
+                      <MapPin size={15} color="var(--primary)" />
+                      <span>Based in {listing.location || 'India'}</span>
+                    </div>
+                    <div className="host-chip">
+                      <Music size={15} color="var(--primary)" />
+                      <span>Tujhe Dekha Toh Yaara</span>
+                    </div>
+                    <div className="host-chip">
+                      <Flag size={15} color="var(--primary)" />
+                      <span>Speaks Hindi, English</span>
+                    </div>
+                  </div>
+
+                  {/* Host details */}
+                  <div className="host-details-box">
+                    <div className="host-detail-row">
+                      <CheckCircle2 size={17} color="#10B981" />
+                      <span><strong>Identity verified</strong></span>
+                    </div>
+                    <div className="host-detail-row">
+                      <MessageCircle size={17} color="var(--primary)" />
+                      <span>Response rate: <strong>100%</strong></span>
+                    </div>
+                    <div className="host-detail-row">
+                      <RotateCcw size={17} color="var(--text-muted)" />
+                      <span>Responds within <strong>an hour</strong></span>
+                    </div>
+                  </div>
+
+                  {/* Message host button */}
+                  <button
+                    id="btn-message-host"
+                    onClick={() => setHostMsgModal(true)}
+                    className="host-message-btn"
                   >
-                    <MessageSquare size={16} /> Message host
+                    <MessageSquare size={17} />
+                    Message host
                   </button>
 
-                  <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'flex-start', gap: '0.65rem', fontSize: '0.78rem', color: 'var(--text-muted)', background: 'var(--light-bg)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                    <ShieldCheck size={20} color="#E11D48" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <span>To help protect your payment, always use StayAira to send money and communicate with hosts.</span>
+                  {/* Safety notice */}
+                  <div className="host-safety-notice">
+                    <ShieldCheck size={19} color="#E11D48" style={{ flexShrink: 0, marginTop: '1px' }} />
+                    <span>
+                      To protect your payment, always use <strong>StayAira</strong> to send money and communicate with hosts.
+                    </span>
                   </div>
                 </div>
 
               </div>
             </div>
 
-            {/* Interactive Map */}
+            {/* Interactive Live Map (100% Free) */}
             <div id="location" style={{ marginBottom: '3rem' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '800', marginBottom: '1rem' }}>Where you'll be</h3>
-              <div style={{ height: '320px', borderRadius: '20px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
-                <MapContainer center={[15.2993, 74.1240]} zoom={12} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <Marker position={[15.2993, 74.1240]}>
-                    <Popup>{listing.title}<br />{listing.location}, {listing.country}</Popup>
-                  </Marker>
-                </MapContainer>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', margin: 0 }}>Where you'll be</h3>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '600' }}>
+                  {listing.location}, {listing.country}
+                </span>
               </div>
+
+              <LiveMap 
+                location={listing.location}
+                country={listing.country}
+                coordinates={listing.coordinates}
+                title={listing.title}
+                price={listing.price}
+                imageUrl={listing.image?.url}
+                height="360px"
+              />
             </div>
 
             {/* Reviews Section */}
@@ -677,7 +739,7 @@ export default function ListingDetail() {
             </div>
 
             <div style={{ background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '1.75rem', boxShadow: 'var(--shadow-md)' }}>
-              
+
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.25rem' }}>
                 <div>
                   <span style={{ fontSize: '1.1rem', textDecoration: 'line-through', color: 'var(--text-muted)', marginRight: '6px' }}>
@@ -694,7 +756,7 @@ export default function ListingDetail() {
               </div>
 
               {/* Date Inputs Box */}
-              <div 
+              <div
                 onClick={() => scrollToSection('calendar-section')}
                 style={{ border: '1.5px solid var(--border-color)', borderRadius: '16px', overflow: 'hidden', marginBottom: '1rem', cursor: 'pointer' }}
               >
@@ -727,14 +789,14 @@ export default function ListingDetail() {
 
               {/* Free Cancellation Badge */}
               <div style={{ background: 'var(--light-bg)', padding: '0.6rem 0.9rem', borderRadius: '12px', fontSize: '0.8rem', fontWeight: '600', textAlign: 'center', marginBottom: '1rem', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
-                Free cancellation before {new Date(new Date(checkIn).getTime() - 24*60*60*1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}
+                Free cancellation before {new Date(new Date(checkIn).getTime() - 24 * 60 * 60 * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}
               </div>
 
               {/* Reserve CTA */}
-              <button 
-                onClick={handleReserve} 
+              <button
+                onClick={handleReserve}
                 disabled={paying}
-                className="btn-primary-stayaira" 
+                className="btn-primary-stayaira"
                 style={{ width: '100%', justifyContent: 'center', padding: '0.9rem', fontSize: '1.05rem', marginBottom: '0.75rem' }}
               >
                 {paying ? 'Initiating Razorpay...' : 'Reserve'}

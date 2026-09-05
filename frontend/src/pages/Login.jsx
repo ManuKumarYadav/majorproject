@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Compass, Eye, EyeOff, Lock, UserCheck } from 'lucide-react';
@@ -12,6 +12,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,15 +46,15 @@ export default function Login() {
   };
 
   return (
-    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
-      <div style={{ width: '100%', maxWidth: '440px', background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2.5rem', boxShadow: 'var(--shadow-md)' }}>
-        
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', margin: '0 auto 1rem', boxShadow: '0 4px 14px rgba(225,29,72,0.3)' }}>
+    <div style={{ minHeight: 'calc(100vh - 120px)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '3.5rem 1rem 4rem' }}>
+      <div style={{ width: '100%', maxWidth: '440px', background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2rem', boxShadow: 'var(--shadow-lg)', margin: 'auto' }}>
+
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', margin: '0 auto 0.75rem', boxShadow: '0 4px 14px rgba(225,29,72,0.3)' }}>
             <Compass size={28} />
           </div>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: '800', marginBottom: '0.4rem' }}>Welcome to StayAira</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Sign in to access your wishlist, reservations, and host tools.</p>
+          <h2 style={{ fontSize: '1.55rem', fontWeight: '800', marginBottom: '0.35rem', color: 'var(--text-main)' }}>Welcome to StayAira</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>Sign in to access your wishlist, reservations, and host tools.</p>
         </div>
 
         {error && (
@@ -59,8 +63,8 @@ export default function Login() {
           </div>
         )}
 
-        <button 
-          type="button" 
+        <button
+          type="button"
           onClick={handleGoogle}
           style={{
             width: '100%', padding: '0.8rem', borderRadius: '12px',
@@ -81,18 +85,18 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          
+
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>
               <UserCheck size={16} style={{ color: 'var(--primary)' }} /> Username or Email
             </label>
-            <input 
-              type="text" 
-              className="stayaira-input" 
-              placeholder="Enter your username or email address" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-              required 
+            <input
+              type="text"
+              className="stayaira-input"
+              placeholder="Enter your username or email address"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </div>
 
@@ -104,17 +108,17 @@ export default function Login() {
               <Link to="/forgot-password" style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--primary)' }}>Forgot Password?</Link>
             </div>
             <div style={{ position: 'relative' }}>
-              <input 
-                type={showPassword ? 'text' : 'password'} 
-                className="stayaira-input" 
-                placeholder="Enter your password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                required 
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="stayaira-input"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
                 style={{ paddingRight: '40px' }}
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 style={{ position: 'absolute', right: '12px', top: '12px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
               >
@@ -123,10 +127,10 @@ export default function Login() {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
-            className="btn-primary-stayaira" 
+            className="btn-primary-stayaira"
             style={{ width: '100%', justifyContent: 'center', padding: '0.85rem', fontSize: '1rem', marginTop: '0.5rem' }}
           >
             {loading ? 'Signing in...' : 'Sign In to StayAira'}

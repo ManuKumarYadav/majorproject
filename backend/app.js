@@ -134,62 +134,62 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: process.env.GOOGLE_CALLBACK_URL || "/auth/google/callback"
     },
-    async (accessToken, refreshToken, profile, done) => {
-        try {
-            // Check if user already exists with this googleId
-            let user = await User.findOne({ googleId: profile.id });
-            if (user) {
-                return done(null, user);
-            }
-
-            // Check if user exists with the same email
-            const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
-            if (email) {
-                user = await User.findOne({ email });
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                // Check if user already exists with this googleId
+                let user = await User.findOne({ googleId: profile.id });
                 if (user) {
-                    user.googleId = profile.id;
-                    if (!user.avatar || !user.avatar.url) {
-                        user.avatar = {
-                            url: profile.photos && profile.photos[0] ? profile.photos[0].value : "",
-                            filename: "google_avatar"
-                        };
-                    }
-                    if (!user.fullName && profile.displayName) {
-                        user.fullName = profile.displayName;
-                    }
-                    await user.save();
                     return done(null, user);
                 }
-            }
 
-            // Create new user for first-time Google sign-in
-            let baseUsername = profile.displayName ? profile.displayName.replace(/[^a-zA-Z0-9]/g, "").toLowerCase() : "user";
-            if (!baseUsername) baseUsername = "user";
-            let username = baseUsername;
-            let count = 1;
-            while (await User.findOne({ username })) {
-                username = `${baseUsername}${Math.floor(100 + Math.random() * 900)}`;
-                count++;
-                if (count > 20) break;
-            }
-
-            const newUser = new User({
-                googleId: profile.id,
-                email: email || `${profile.id}@gmail.com`,
-                username: username,
-                fullName: profile.displayName || "",
-                avatar: {
-                    url: profile.photos && profile.photos[0] ? profile.photos[0].value : "",
-                    filename: "google_avatar"
+                // Check if user exists with the same email
+                const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+                if (email) {
+                    user = await User.findOne({ email });
+                    if (user) {
+                        user.googleId = profile.id;
+                        if (!user.avatar || !user.avatar.url) {
+                            user.avatar = {
+                                url: profile.photos && profile.photos[0] ? profile.photos[0].value : "",
+                                filename: "google_avatar"
+                            };
+                        }
+                        if (!user.fullName && profile.displayName) {
+                            user.fullName = profile.displayName;
+                        }
+                        await user.save();
+                        return done(null, user);
+                    }
                 }
-            });
 
-            await newUser.save();
-            return done(null, newUser);
-        } catch (err) {
-            return done(err, null);
-        }
-    }));
+                // Create new user for first-time Google sign-in
+                let baseUsername = profile.displayName ? profile.displayName.replace(/[^a-zA-Z0-9]/g, "").toLowerCase() : "user";
+                if (!baseUsername) baseUsername = "user";
+                let username = baseUsername;
+                let count = 1;
+                while (await User.findOne({ username })) {
+                    username = `${baseUsername}${Math.floor(100 + Math.random() * 900)}`;
+                    count++;
+                    if (count > 20) break;
+                }
+
+                const newUser = new User({
+                    googleId: profile.id,
+                    email: email || `${profile.id}@gmail.com`,
+                    username: username,
+                    fullName: profile.displayName || "",
+                    avatar: {
+                        url: profile.photos && profile.photos[0] ? profile.photos[0].value : "",
+                        filename: "google_avatar"
+                    }
+                });
+
+                await newUser.save();
+                return done(null, newUser);
+            } catch (err) {
+                return done(err, null);
+            }
+        }));
 }
 
 passport.serializeUser(User.serializeUser());
@@ -213,10 +213,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.get("/demouser", async (req,res)=>{
-//     let fakeUser = new User({
-//         email: "fakeuser@example.com",
-//         username: "delta-student"
+
 const fs = require("fs");
 
 // REST API Routes for React SPA

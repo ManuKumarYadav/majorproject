@@ -57,8 +57,8 @@ export function HelpPage() {
 export function AirCoverPage() {
   return (
     <div className="stayaira-container" style={{ maxWidth: '840px', padding: '3rem 1.5rem', textAlign: 'center' }}>
-      <span style={{ fontSize: '2.5rem', fontWeight: '900', color: '#E11D48' }}>air</span><span style={{ fontSize: '2.5rem', fontWeight: '900' }}>cover</span>
-      <h1 style={{ fontSize: '1.8rem', fontWeight: '800', margin: '1rem 0' }}>Comprehensive Booking Protection</h1>
+      <h1 style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--primary)' }}>StayAira Shield</h1>
+      <h2 style={{ fontSize: '1.4rem', fontWeight: '800', margin: '1rem 0' }}>Comprehensive Booking Protection</h2>
       <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.6' }}>
         Included free with every single stay on StayAira. Includes booking guarantee, check-in guarantee, and 24/7 dedicated safety hotline.
       </p>

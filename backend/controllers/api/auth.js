@@ -223,7 +223,7 @@ module.exports.updateProfile = async (req, res) => {
         if (!req.isAuthenticated()) {
             return res.status(401).json({ success: false, message: "Please log in." });
         }
-        const { fullName, bio, location, work, phone } = req.body;
+        const { fullName, bio, location, work, phone, languages } = req.body;
         const user = await User.findById(req.user._id);
         if (!user) return res.status(404).json({ success: false, message: "User not found." });
 
@@ -232,6 +232,7 @@ module.exports.updateProfile = async (req, res) => {
         if (location !== undefined) user.location = location;
         if (work !== undefined) user.work = work;
         if (phone !== undefined) user.phone = phone;
+        if (languages !== undefined) user.languages = languages;
 
         // If a new avatar was uploaded via multer + cloudinary
         if (req.file) {
@@ -256,6 +257,7 @@ module.exports.updateProfile = async (req, res) => {
                     location: user.location,
                     work: user.work,
                     phone: user.phone,
+                    languages: user.languages,
                 }
             });
         });

@@ -6,6 +6,7 @@ import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import './index.css';
+import 'leaflet/dist/leaflet.css';
 
 // Set base URL for API requests when deployed to Vercel (or local dev with VITE_API_URL)
 if (import.meta.env.VITE_API_URL) {

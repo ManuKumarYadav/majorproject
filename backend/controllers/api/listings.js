@@ -6,17 +6,27 @@ module.exports.index = async (req, res) => {
         let query = {};
 
         if (category && category !== "All" && category !== "Trending") {
-            query.category = { $regex: new RegExp(category, "i") };
+            const catRegex = new RegExp(category, "i");
+            query.$or = [
+                { category: catRegex },
+                { location: catRegex }
+            ];
         }
 
         if (search && search.trim() !== "") {
             const regex = new RegExp(search.trim(), "i");
-            query.$or = [
+            const searchOr = [
                 { title: regex },
                 { location: regex },
                 { country: regex },
                 { category: regex }
             ];
+            if (query.$or) {
+                query.$and = [{ $or: query.$or }, { $or: searchOr }];
+                delete query.$or;
+            } else {
+                query.$or = searchOr;
+            }
         }
 
         if (minPrice || maxPrice) {
@@ -70,7 +80,7 @@ module.exports.createListing = async (req, res) => {
 
         const newListing = new Listing(listingData);
         newListing.owner = req.user._id;
-        
+
         if (url) {
             newListing.image = { url, filename };
         }

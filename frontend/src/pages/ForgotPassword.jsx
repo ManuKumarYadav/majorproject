@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Key, Lock, CheckCircle2, ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
@@ -11,6 +11,10 @@ export default function ForgotPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const handleVerifyEmail = async (e) => {
     e.preventDefault();
@@ -57,9 +61,9 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
-      <div style={{ width: '100%', maxWidth: '440px', background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
-        
+    <div style={{ minHeight: 'calc(100vh - 120px)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '3.5rem 1rem 4rem' }}>
+      <div style={{ width: '100%', maxWidth: '440px', background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', margin: 'auto' }}>
+
         {/* Header */}
         <div style={{ background: 'var(--primary-gradient)', padding: '2rem', textAlign: 'center', color: '#fff' }}>
           <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', backdropFilter: 'blur(8px)' }}>
@@ -84,13 +88,13 @@ export default function ForgotPassword() {
             <form onSubmit={handleVerifyEmail} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>Email Address</label>
-                <input 
-                  type="email" 
-                  className="stayaira-input" 
-                  placeholder="Enter your registered email" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  required 
+                <input
+                  type="email"
+                  className="stayaira-input"
+                  placeholder="Enter your registered email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
               <button type="submit" disabled={loading} className="btn-primary-stayaira" style={{ width: '100%', justifyContent: 'center', padding: '0.85rem' }}>
@@ -113,14 +117,14 @@ export default function ForgotPassword() {
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>New Password</label>
                 <div style={{ position: 'relative' }}>
-                  <input 
-                    type={showPassword ? 'text' : 'password'} 
-                    className="stayaira-input" 
-                    placeholder="Min. 6 characters" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    minLength="6" 
-                    required 
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="stayaira-input"
+                    placeholder="Min. 6 characters"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    minLength="6"
+                    required
                     style={{ paddingRight: '40px' }}
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '12px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
@@ -131,13 +135,13 @@ export default function ForgotPassword() {
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>Confirm Password</label>
-                <input 
-                  type="password" 
-                  className="stayaira-input" 
-                  placeholder="Re-enter new password" 
-                  value={confirmPassword} 
-                  onChange={(e) => setConfirmPassword(e.target.value)} 
-                  required 
+                <input
+                  type="password"
+                  className="stayaira-input"
+                  placeholder="Re-enter new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
                 />
               </div>
 

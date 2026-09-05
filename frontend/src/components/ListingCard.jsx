@@ -29,12 +29,12 @@ export default function ListingCard({ listing, displayTax }) {
     <Link to={'/listings/' + listing._id} className="listing-card-wrapper">
       <div className="listing-image-box">
         <img src={imageUrl} alt={listing.title} loading="lazy" />
-        
+
         <div className="badge-guest-favorite">
           <Star size={12} fill="#E11D48" color="#E11D48" /> Guest favorite
         </div>
 
-        <button 
+        <button
           className={'wishlist-btn' + (liked ? ' active' : '')}
           onClick={handleHeartClick}
           title={liked ? 'Remove from wishlist' : 'Add to wishlist'}

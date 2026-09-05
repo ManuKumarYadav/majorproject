@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Compass, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
@@ -13,6 +13,11 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Always ensure page starts at the top when navigated to
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,15 +48,15 @@ export default function Signup() {
   };
 
   return (
-    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
-      <div style={{ width: '100%', maxWidth: '460px', background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2.5rem', boxShadow: 'var(--shadow-md)' }}>
-        
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', margin: '0 auto 1rem', boxShadow: '0 4px 14px rgba(225,29,72,0.3)' }}>
+    <div style={{ minHeight: 'calc(100vh - 120px)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '3.5rem 1rem 4rem' }}>
+      <div style={{ width: '100%', maxWidth: '460px', background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2rem', boxShadow: 'var(--shadow-lg)', margin: 'auto' }}>
+
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', margin: '0 auto 0.75rem', boxShadow: '0 4px 14px rgba(225,29,72,0.3)' }}>
             <Compass size={28} />
           </div>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: '800', marginBottom: '0.4rem' }}>Create StayAira Account</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join over 100,000+ luxury travelers & hosts worldwide.</p>
+          <h2 style={{ fontSize: '1.55rem', fontWeight: '800', marginBottom: '0.35rem', color: 'var(--text-main)' }}>Create StayAira Account</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>Join over 100,000+ luxury travelers & hosts worldwide.</p>
         </div>
 
         {error && (
@@ -60,8 +65,8 @@ export default function Signup() {
           </div>
         )}
 
-        <button 
-          type="button" 
+        <button
+          type="button"
           onClick={handleGoogle}
           style={{
             width: '100%', padding: '0.8rem', borderRadius: '12px',
@@ -76,19 +81,19 @@ export default function Signup() {
         </button>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          
+
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>
               <User size={16} style={{ color: 'var(--primary)' }} /> Choose Username
             </label>
-            <input 
-              type="text" 
-              className="stayaira-input" 
-              placeholder="e.g. wanderer_2026" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
+            <input
+              type="text"
+              className="stayaira-input"
+              placeholder="e.g. wanderer_2026"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               pattern="^[a-zA-Z0-9_.-]+$"
-              required 
+              required
             />
           </div>
 
@@ -96,13 +101,13 @@ export default function Signup() {
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>
               <Mail size={16} style={{ color: 'var(--primary)' }} /> Email Address
             </label>
-            <input 
-              type="email" 
-              className="stayaira-input" 
-              placeholder="name@example.com" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
+            <input
+              type="email"
+              className="stayaira-input"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -111,18 +116,18 @@ export default function Signup() {
               <Lock size={16} style={{ color: 'var(--primary)' }} /> Password
             </label>
             <div style={{ position: 'relative' }}>
-              <input 
-                type={showPassword ? 'text' : 'password'} 
-                className="stayaira-input" 
-                placeholder="Min. 6 characters" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="stayaira-input"
+                placeholder="Min. 6 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 minLength="6"
-                required 
+                required
                 style={{ paddingRight: '40px' }}
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 style={{ position: 'absolute', right: '12px', top: '12px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
               >
@@ -131,10 +136,10 @@ export default function Signup() {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
-            className="btn-primary-stayaira" 
+            className="btn-primary-stayaira"
             style={{ width: '100%', justifyContent: 'center', padding: '0.85rem', fontSize: '1rem', marginTop: '0.5rem' }}
           >
             {loading ? 'Creating Account...' : 'Create Account'}
