@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import defaultAvatar from '../assets/default-avatar.jpg';
 import { useTheme } from '../context/ThemeContext';
 import {
   Compass, Search, Moon, Sun, User, LogIn, UserPlus, PlusCircle,
@@ -150,8 +151,6 @@ export default function Navbar({ onSearch }) {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
-  const [bannerVisible, setBannerVisible] = useState(true);
-  const [copiedCode, setCopiedCode] = useState(false);
 
   // Mega menu states: 'brands' | 'categories' | 'explore' | 'touch' | null
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
@@ -187,12 +186,6 @@ export default function Navbar({ onSearch }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const copyCouponCode = () => {
-    navigator.clipboard.writeText('STAYAIRA50');
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 2000);
-  };
 
   const handleCopyNumber = () => {
     navigator.clipboard.writeText('7352966256');
@@ -235,47 +228,6 @@ export default function Navbar({ onSearch }) {
         className={`main-header stayvista-header ${isHomePage && !scrolled && !activeMegaMenu ? 'transparent-header' : 'solid-header'}`}
         style={{ position: 'sticky', top: 0, zIndex: 1050 }}
       >
-        {/* Top Announcement Banner with High-Visibility Coupon Code */}
-        {bannerVisible && (
-          <div className="stayvista-top-banner">
-            <div className="banner-content-inner">
-              <span className="banner-promo-tag">⚡ SPECIAL OFFER</span>
-              <span className="banner-promo-text">
-                FLAT <strong>50% OFF</strong> on 2nd night on our newest escapes!
-              </span>
-              <div
-                className="banner-coupon-pill"
-                onClick={copyCouponCode}
-                title="Click to copy coupon code"
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') copyCouponCode(); }}
-              >
-                <span className="coupon-pill-label">CODE:</span>
-                <span className="coupon-pill-code">STAYAIRA50</span>
-                <span className={`coupon-copy-badge ${copiedCode ? 'copied' : ''}`}>
-                  {copiedCode ? (
-                    <>
-                      <Check size={12} color="#10B981" /> COPIED!
-                    </>
-                  ) : (
-                    <>
-                      <Copy size={12} /> COPY
-                    </>
-                  )}
-                </span>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setBannerVisible(false)}
-              className="banner-close-btn"
-              aria-label="Close promotion banner"
-            >
-              <X size={15} />
-            </button>
-          </div>
-        )}
 
         {/* Mobile Top Header with Search Pill and Dark/Light Theme Button */}
         <div className="mobile-top-search-bar">
@@ -373,9 +325,17 @@ export default function Navbar({ onSearch }) {
             </div>
 
             {/* List your Property */}
-            <Link to="/listings/new" className="nav-link-item">
+            <button
+              type="button"
+              className="nav-link-item"
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              onClick={() => {
+                sessionStorage.setItem('stayaira_mode', 'hosting');
+                navigate('/listings/new', { state: { fromHosting: true } });
+              }}
+            >
               List your Property
-            </Link>
+            </button>
 
             {/* Explore Button */}
             <button
@@ -391,13 +351,31 @@ export default function Navbar({ onSearch }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
 
             {/* Airbnb-Style Switch to hosting / Switch to traveling */}
-            <Link
-              to={location.pathname.startsWith('/host') ? '/' : (user ? '/host/dashboard' : '/login')}
-              className="switch-hosting-btn desktop-only"
-              title={location.pathname.startsWith('/host') ? 'Switch to traveling' : 'Switch to hosting'}
-            >
-              {location.pathname.startsWith('/host') ? 'Switch to traveling' : 'Switch to hosting'}
-            </Link>
+            {location.pathname.startsWith('/host') ? (
+              <button
+                type="button"
+                className="switch-hosting-btn desktop-only"
+                title="Switch to traveling"
+                onClick={() => {
+                  sessionStorage.removeItem('stayaira_mode');
+                  navigate('/');
+                }}
+              >
+                Switch to traveling
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="switch-hosting-btn desktop-only"
+                title="Switch to hosting"
+                onClick={() => {
+                  sessionStorage.setItem('stayaira_mode', 'hosting');
+                  navigate(user ? '/host/dashboard' : '/login', { state: { fromHosting: true } });
+                }}
+              >
+                Switch to hosting
+              </button>
+            )}
 
             <button
               onClick={toggleTheme}
@@ -437,67 +415,40 @@ export default function Navbar({ onSearch }) {
                   transition: 'transform 0.2s ease, border-color 0.2s ease'
                 }}
               >
-                {user?.avatar?.url ? (
-                  <img
-                    src={user.avatar.url}
-                    alt="avatar"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      display: 'block'
-                    }}
-                  />
-                ) : user ? (
-                  <div style={{
+                <img
+                  src={user?.avatar?.url || defaultAvatar}
+                  alt={user ? user.username : 'Guest'}
+                  style={{
                     width: '100%',
                     height: '100%',
                     borderRadius: '50%',
-                    background: 'var(--primary-gradient)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#FFFFFF',
-                    fontWeight: '800',
-                    fontSize: '0.95rem'
-                  }}>
-                    {user.username.slice(0, 1).toUpperCase()}
-                  </div>
-                ) : (
-                  <div style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '50%',
-                    background: 'rgba(0,0,0,0.06)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--text-main)'
-                  }}>
-                    <User size={18} />
-                  </div>
-                )}
+                    objectFit: 'cover',
+                    display: 'block'
+                  }}
+                  onError={(e) => { e.target.src = defaultAvatar; }}
+                />
               </button>
 
               {dropdownOpen && (
                 <div
                   style={{
-                    position: 'absolute', right: 0, top: '50px', width: '280px',
+                    position: 'absolute', right: 0, top: '50px', width: user ? '280px' : '180px',
                     background: 'var(--card-bg)', borderRadius: '16px',
                     border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)',
-                    padding: '0.5rem 0', zIndex: 100, overflow: 'hidden'
+                    padding: '0.4rem 0', zIndex: 100, overflow: 'hidden'
                   }}
                   onClick={() => setDropdownOpen(false)}
                 >
                   {user ? (
                     <>
                       <div style={{ padding: '0.75rem 1.25rem', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'linear-gradient(135deg,#E11D48,#f43f5e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '700' }}>
-                          {user.avatar?.url
-                            ? <img src={user.avatar.url} alt="avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                            : user.username.slice(0, 1).toUpperCase()
-                          }
+                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                          <img
+                            src={user.avatar?.url || defaultAvatar}
+                            alt={user.username}
+                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                            onError={(e) => { e.target.src = defaultAvatar; }}
+                          />
                         </div>
                         <div style={{ minWidth: 0, flex: 1 }}>
                           <p style={{ fontWeight: '700', fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.fullName || user.username}</p>
@@ -547,39 +498,22 @@ export default function Navbar({ onSearch }) {
                       </button>
                     </>
                   ) : (
-                    <>
-                      <Link to="/login" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.75rem 1.25rem', fontSize: '0.95rem', fontWeight: '700' }}>
-                        <LogIn size={16} /> Sign In
-                      </Link>
-                      <Link to="/signup" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.75rem 1.25rem', fontSize: '0.95rem', fontWeight: '600', color: 'var(--primary)' }}>
-                        <UserPlus size={16} /> Create Account
-                      </Link>
-                      <div style={{ height: '1px', background: 'var(--border-color)', margin: '0.4rem 0' }}></div>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleTheme();
-                        }}
+                    <div style={{ padding: '0.25rem 0' }}>
+                      <Link
+                        to="/login"
                         style={{
-                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                          padding: '0.65rem 1.25rem', width: '100%',
-                          background: 'none', border: 'none', cursor: 'pointer',
-                          fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-main)', textAlign: 'left'
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.65rem',
+                          padding: '0.75rem 1.25rem',
+                          fontSize: '0.95rem',
+                          fontWeight: '700',
+                          color: 'var(--text-main)'
                         }}
                       >
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                          {theme === 'dark' ? <Sun size={16} color="#FBBF24" /> : <Moon size={16} color="#6366F1" />}
-                          <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                        </span>
-                        <span style={{ fontSize: '0.72rem', background: 'var(--border-color)', padding: '2px 8px', borderRadius: '10px', color: 'var(--text-muted)' }}>
-                          {theme === 'dark' ? 'DARK' : 'LIGHT'}
-                        </span>
-                      </button>
-                      <Link to="/help" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.65rem 1.25rem', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-                        Help Center
+                        <LogIn size={18} color="var(--primary)" /> Log In
                       </Link>
-                    </>
+                    </div>
                   )}
                 </div>
               )}
