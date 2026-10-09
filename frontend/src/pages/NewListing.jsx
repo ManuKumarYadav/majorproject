@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { 
   Trophy, Home, CheckCircle2, ShieldCheck, TrendingUp, Users, 
   Award, Sparkles, PhoneCall, MessageSquare, Upload, ArrowRight,
-  Coffee, HeartHandshake, DollarSign, MapPin, Building, ChevronDown
+  Coffee, HeartHandshake, DollarSign, MapPin, Building, ChevronDown,
+  Luggage, ArrowLeftRight, Lock
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -54,6 +55,111 @@ const VALUE_PROPOSITIONS = [
 export default function NewListing() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // ── Travelling-mode guard ─────────────────────────────────────────────────
+  // The navbar sets `state.fromHosting = true` when switching to hosting.
+  // We store it in sessionStorage so it persists across refreshes on this page.
+  const isHostingMode = (() => {
+    if (location.state?.fromHosting) {
+      sessionStorage.setItem('stayaira_mode', 'hosting');
+      return true;
+    }
+    return sessionStorage.getItem('stayaira_mode') === 'hosting';
+  })();
+
+  if (!isHostingMode) {
+    return (
+      <div style={{
+        minHeight: '80vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+        background: 'var(--bg-main)'
+      }}>
+        <div style={{
+          maxWidth: '480px',
+          width: '100%',
+          background: 'var(--card-bg)',
+          borderRadius: '24px',
+          border: '1.5px solid var(--border-color)',
+          boxShadow: 'var(--shadow-lg)',
+          padding: '2.5rem 2rem',
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '1.25rem'
+        }}>
+          {/* Icon */}
+          <div style={{
+            width: '72px', height: '72px', borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(225,29,72,0.1), rgba(244,63,94,0.15))',
+            border: '2px solid rgba(225,29,72,0.2)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <Luggage size={32} color="var(--primary)" />
+          </div>
+
+          {/* Badge */}
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            background: 'rgba(225,29,72,0.08)', color: 'var(--primary)',
+            fontSize: '0.75rem', fontWeight: '700', letterSpacing: '0.5px',
+            padding: '4px 12px', borderRadius: '20px', textTransform: 'uppercase'
+          }}>
+            <Lock size={11} /> Travelling Mode Active
+          </span>
+
+          <div>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', margin: '0 0 0.5rem', color: 'var(--text-main)' }}>
+              You're currently travelling
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.93rem', lineHeight: '1.6', margin: 0 }}>
+              Listing a property is only available in <strong>Hosting Mode</strong>.
+              Switch modes to manage your properties, add new listings, and access your host dashboard.
+            </p>
+          </div>
+
+          {/* Mode toggle visual */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.75rem',
+            background: 'var(--light-bg)', borderRadius: '12px',
+            padding: '0.75rem 1.25rem', width: '100%', justifyContent: 'center'
+          }}>
+            <span style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.88rem' }}>✈ Travelling</span>
+            <ArrowLeftRight size={16} color="var(--text-muted)" />
+            <span style={{ fontWeight: '600', color: 'var(--text-muted)', fontSize: '0.88rem' }}>🏠 Hosting</span>
+          </div>
+
+          {/* CTA */}
+          <button
+            onClick={() => navigate('/host/dashboard', { state: { fromHosting: true } })}
+            style={{
+              width: '100%', padding: '0.9rem 1.5rem',
+              background: 'var(--primary-gradient)', color: '#fff',
+              border: 'none', borderRadius: '12px',
+              fontSize: '0.95rem', fontWeight: '700',
+              cursor: 'pointer', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', gap: '0.5rem',
+              boxShadow: '0 4px 14px rgba(225,29,72,0.3)',
+              transition: 'transform 0.2s, box-shadow 0.2s'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(225,29,72,0.4)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 4px 14px rgba(225,29,72,0.3)'; }}
+          >
+            <ArrowLeftRight size={16} /> Switch to Hosting Mode
+          </button>
+
+          <Link to="/" style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textDecoration: 'none' }}>
+            ← Back to browsing
+          </Link>
+        </div>
+      </div>
+    );
+  }
+  // ── End guard ─────────────────────────────────────────────────────────────
 
   const [formData, setFormData] = useState({
     firstName: user?.fullName ? user.fullName.split(' ')[0] : '',
