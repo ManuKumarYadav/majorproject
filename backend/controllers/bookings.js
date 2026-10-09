@@ -3,7 +3,6 @@ const crypto = require("crypto");
 const Listing = require("../models/listing");
 const Booking = require("../models/booking");
 
-// Initialize Razorpay instance
 const getRazorpayInstance = () => {
     const key_id = process.env.RAZORPAY_KEY_ID || "rzp_test_placeholder";
     const key_secret = process.env.RAZORPAY_KEY_SECRET || "placeholder_secret";
