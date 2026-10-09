@@ -1,10 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Compass, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import {
+  Compass, Mail, Lock, User, Eye, EyeOff, ChevronRight,
+  Sun, Moon, ArrowLeft, AlertCircle, HelpCircle,
+  PhoneCall, ShieldCheck, Check, X
+} from 'lucide-react';
+
+// ── Password strength scorer ──────────────────────────────────────────
+function getPasswordStrength(pwd) {
+  const checks = {
+    length:    pwd.length >= 8,
+    uppercase: /[A-Z]/.test(pwd),
+    number:    /[0-9]/.test(pwd),
+    special:   /[^A-Za-z0-9]/.test(pwd),
+  };
+  const score = Object.values(checks).filter(Boolean).length; // 0–4
+  const levels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+  const colors = ['', '#EF4444', '#F59E0B', '#3B82F6', '#10B981'];
+  return { checks, score, label: levels[score] || '', color: colors[score] || '' };
+}
 
 export default function Signup() {
   const { signup, signInWithGoogle } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
@@ -14,13 +34,19 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Always ensure page starts at the top when navigated to
+  const strength = useMemo(() => getPasswordStrength(password), [password]);
+  const isPasswordOk = strength.score >= 3; // require Good or Strong
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isPasswordOk) {
+      setError('Please choose a stronger password (at least Good strength).');
+      return;
+    }
     setError('');
     setLoading(true);
     try {
@@ -29,7 +55,7 @@ export default function Signup() {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed.');
+      setError(err.response?.data?.message || 'Registration failed. Please check your details.');
     } finally {
       setLoading(false);
     }
@@ -48,109 +74,269 @@ export default function Signup() {
   };
 
   return (
-    <div style={{ minHeight: 'calc(100vh - 120px)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '3.5rem 1rem 4rem' }}>
-      <div style={{ width: '100%', maxWidth: '460px', background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2rem', boxShadow: 'var(--shadow-lg)', margin: 'auto' }}>
+    <div className="curve-auth-wrapper">
+      {/* ─────────────────────────────────────────────
+          LEFT PANEL: BRAND SHOWCASE & TAGLINE
+      ───────────────────────────────────────────── */}
+      <div className="curve-auth-left">
+        <div className="curve-auth-left-overlay"></div>
 
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', margin: '0 auto 0.75rem', boxShadow: '0 4px 14px rgba(225,29,72,0.3)' }}>
-            <Compass size={28} />
+        <div className="curve-auth-left-content">
+          {/* Logo Card */}
+          <Link to="/" className="curve-auth-logo-box" title="StayAira Home">
+            <Compass size={36} color="#ffffff" />
+          </Link>
+
+          {/* Brand Name */}
+          <h1 className="curve-auth-brand-name">StayAira</h1>
+
+          {/* Tagline Card */}
+          <div className="curve-auth-tagline-card">
+            <p className="curve-auth-tagline-text">
+              A fast and reliable luxury villa booking platform.
+            </p>
           </div>
-          <h2 style={{ fontSize: '1.55rem', fontWeight: '800', marginBottom: '0.35rem', color: 'var(--text-main)' }}>Create StayAira Account</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>Join over 100,000+ luxury travelers & hosts worldwide.</p>
+        </div>
+      </div>
+
+      {/* ─────────────────────────────────────────────
+          RIGHT PANEL: SIGNUP FORM + APPEARANCE + OPTIONS
+      ───────────────────────────────────────────── */}
+      <div className="curve-auth-right">
+        {/* Organic Curve Divider SVG */}
+        <div className="curve-auth-svg-divider">
+          <svg
+            viewBox="0 0 160 1000"
+            preserveAspectRatio="none"
+            style={{ width: '100%', height: '100%', display: 'block' }}
+          >
+            <path
+              d="M 160,0 C 90,160 15,480 0,1000 L 160,1000 Z"
+              fill="var(--card-bg)"
+            />
+          </svg>
         </div>
 
-        {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #EF4444', color: '#EF4444', padding: '0.75rem 1rem', borderRadius: '12px', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-            {error}
-          </div>
-        )}
-
-        <button
-          type="button"
-          onClick={handleGoogle}
-          style={{
-            width: '100%', padding: '0.8rem', borderRadius: '12px',
-            background: 'var(--light-bg)', border: '1.5px solid var(--border-color)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-            fontWeight: '700', fontSize: '0.95rem', cursor: 'pointer', marginBottom: '1.5rem',
-            color: 'var(--text-main)'
-          }}
-        >
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '18px', height: '18px' }} />
-          Sign up with Google
-        </button>
-
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-
-          <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>
-              <User size={16} style={{ color: 'var(--primary)' }} /> Choose Username
-            </label>
-            <input
-              type="text"
-              className="stayaira-input"
-              placeholder="e.g. wanderer_2026"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              pattern="^[a-zA-Z0-9_.-]+$"
-              required
-            />
-          </div>
-
-          <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>
-              <Mail size={16} style={{ color: 'var(--primary)' }} /> Email Address
-            </label>
-            <input
-              type="email"
-              className="stayaira-input"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '6px' }}>
-              <Lock size={16} style={{ color: 'var(--primary)' }} /> Password
-            </label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                className="stayaira-input"
-                placeholder="Min. 6 characters"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                minLength="6"
-                required
-                style={{ paddingRight: '40px' }}
-              />
+        {/* Top Bar with Appearance Switcher & Back to Site */}
+        <div className="curve-auth-top-bar">
+          {/* Dedicated Appearance / Theme Switcher */}
+          <div className="curve-appearance-group">
+            <span className="curve-appearance-label">Appearance:</span>
+            <div className="curve-appearance-pills">
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ position: 'absolute', right: '12px', top: '12px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                onClick={() => { if (theme === 'dark') toggleTheme(); }}
+                className={`curve-appearance-btn ${theme !== 'dark' ? 'active' : ''}`}
+                title="Light mode"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                <Sun size={13} color="#F59E0B" /> Light
+              </button>
+              <button
+                type="button"
+                onClick={() => { if (theme !== 'dark') toggleTheme(); }}
+                className={`curve-appearance-btn ${theme === 'dark' ? 'active' : ''}`}
+                title="Dark mode"
+              >
+                <Moon size={13} color="#818CF8" /> Dark
               </button>
             </div>
           </div>
 
+          <Link to="/" className="curve-auth-back-link">
+            <ArrowLeft size={14} />
+            <span>Back to site</span>
+          </Link>
+        </div>
+
+        {/* Form Container */}
+        <div className="curve-auth-form-container">
+          {/* Heading */}
+          <h2 className="curve-auth-title">Create account</h2>
+          <p className="curve-auth-subtitle">
+            Enter your details to access your dashboard.
+          </p>
+
+          {/* Error Alert */}
+          {error && (
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.08)',
+              border: '1.5px solid #EF4444',
+              color: '#EF4444',
+              padding: '0.85rem 1rem',
+              borderRadius: '12px',
+              fontSize: '0.88rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              marginBottom: '1.25rem'
+            }}>
+              <AlertCircle size={18} style={{ flexShrink: 0 }} />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            {/* Username Field */}
+            <div className="curve-auth-field">
+              <label className="curve-auth-label">Choose Username</label>
+              <div className="curve-auth-input-box">
+                <input
+                  type="text"
+                  className="curve-auth-input"
+                  placeholder="wanderer_2026"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  pattern="^[a-zA-Z0-9_.-]+$"
+                  required
+                  autoComplete="username"
+                />
+                <User size={18} className="curve-auth-input-icon" />
+              </div>
+            </div>
+
+            {/* Email Address Field */}
+            <div className="curve-auth-field">
+              <label className="curve-auth-label">Email Address</label>
+              <div className="curve-auth-input-box">
+                <input
+                  type="email"
+                  className="curve-auth-input"
+                  placeholder="hello@stayaira.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                />
+                <Mail size={18} className="curve-auth-input-icon" />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="curve-auth-field">
+              <label className="curve-auth-label">Password</label>
+              <div className="curve-auth-input-box">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  className="curve-auth-input"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="new-password"
+                  style={{ paddingRight: '44px' }}
+                />
+                <Lock size={18} className="curve-auth-input-icon" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="curve-auth-toggle-pwd"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              {/* ── Password Strength Meter ────────────────────── */}
+              {password.length > 0 && (
+                <div className="pwd-strength-wrapper">
+                  {/* Segmented progress bars */}
+                  <div className="pwd-strength-bars">
+                    {[1, 2, 3, 4].map((seg) => (
+                      <div
+                        key={seg}
+                        className="pwd-strength-bar"
+                        style={{
+                          background: strength.score >= seg ? strength.color : 'var(--border-color)',
+                          transition: 'background 0.35s ease'
+                        }}
+                      />
+                    ))}
+                  </div>
+                  {/* Label */}
+                  {strength.label && (
+                    <span className="pwd-strength-label" style={{ color: strength.color }}>
+                      {strength.label}
+                    </span>
+                  )}
+
+                  {/* Requirements checklist */}
+                  <ul className="pwd-requirements">
+                    {[
+                      { key: 'length',    text: 'At least 8 characters' },
+                      { key: 'uppercase', text: 'One uppercase letter (A-Z)' },
+                      { key: 'number',    text: 'One number (0-9)' },
+                      { key: 'special',   text: 'One special character (!@#…)' },
+                    ].map(({ key, text }) => (
+                      <li key={key} className={`pwd-req-item ${strength.checks[key] ? 'met' : ''}`}>
+                        {strength.checks[key]
+                          ? <Check size={12} style={{ color: '#10B981', flexShrink: 0 }} />
+                          : <X     size={12} style={{ color: '#EF4444', flexShrink: 0 }} />
+                        }
+                        <span>{text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading || !isPasswordOk}
+              className="curve-auth-submit-btn"
+              title={!isPasswordOk ? 'Strengthen your password first' : ''}
+            >
+              <span>{loading ? 'Creating Account...' : 'Sign Up'}</span>
+              {!loading && <ChevronRight size={18} />}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="curve-auth-divider">
+            <div className="curve-auth-divider-line"></div>
+            <span className="curve-auth-divider-text">or continue with</span>
+            <div className="curve-auth-divider-line"></div>
+          </div>
+
+          {/* Google Sign-up */}
           <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary-stayaira"
-            style={{ width: '100%', justifyContent: 'center', padding: '0.85rem', fontSize: '1rem', marginTop: '0.5rem' }}
+            type="button"
+            onClick={handleGoogle}
+            className="curve-auth-google-btn"
           >
-            {loading ? 'Creating Account...' : 'Create Account'}
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google"
+              style={{ width: '18px', height: '18px' }}
+            />
+            Sign up with Google
           </button>
 
-        </form>
+          {/* Footer: Sign In Link */}
+          <p className="curve-auth-footer">
+            Already have an account?{' '}
+            <Link to="/login" className="curve-auth-footer-link">
+              Sign in
+            </Link>
+          </p>
 
-        <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '1.75rem' }}>
-          Already have an account? <Link to="/login" style={{ fontWeight: '700', color: 'var(--primary)' }}>Sign in here</Link>
-        </p>
+          {/* Extra Options: Help Center & Support */}
+          <div className="curve-auth-help-bar">
+            <Link to="/help" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <HelpCircle size={13} /> Help Center
+            </Link>
+            <span>·</span>
+            <a href="tel:+917352966256" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <PhoneCall size={13} /> 24/7 Concierge
+            </a>
+            <span>·</span>
+            <Link to="/terms" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <ShieldCheck size={13} /> Privacy & Terms
+            </Link>
+          </div>
 
+        </div>
       </div>
     </div>
   );
